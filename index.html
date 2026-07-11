@@ -63,7 +63,8 @@
     }
   </style>
 </head>
-<body class="bg-[#121212] text-white font-sans min-h-screen flex items-center justify-center sm:py-8 transition-colors duration-300">
+<!-- sm:flex, sm:items-center, sm:justify-center দিয়ে শুধুমাত্র বড় স্ক্রিনে সেন্টার করা হয়েছে, মোবাইলে নয় -->
+<body class="bg-[#121212] text-white font-sans min-h-screen sm:flex sm:items-center sm:justify-center sm:py-8 transition-colors duration-300">
 
   <!-- ==================================================== -->
   <!-- 1. User Application View -->
@@ -206,7 +207,7 @@
       </div>
     </main>
 
-    <!-- Floating Navigation Bar -->
+    <!-- Floating Navigation Bar (Locked with fixed) -->
     <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] z-50">
       <nav id="bottom-nav" class="bg-[#1c1c1e]/90 backdrop-blur-md border border-gray-800/80 rounded-full py-3 px-6 flex justify-between items-center shadow-2xl transition-colors duration-300">
         <!-- Loaded dynamically via JS -->
@@ -531,10 +532,10 @@
       const settingsScreen = document.getElementById('user-settings-screen');
       const pageTitleSection = document.getElementById('page-title-section');
 
-      // Close search bar and clear text dynamically
+      // Close search bar and clear text dynamically (With smooth keyboard blur first)
       isSearchActive = false;
       const input = document.getElementById('search-input');
-      input.blur(); // Dismiss keyboard smoothly
+      input.blur(); // Dismiss virtual keyboard smoothly first
       
       document.getElementById('header-main-content').classList.remove('hidden');
       document.getElementById('header-search-content').classList.add('hidden');
