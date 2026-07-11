@@ -73,7 +73,8 @@
     <!-- Header -->
     <header id="user-header" class="p-4 flex justify-between items-center bg-[#121212] sticky top-0 z-10 border-b border-transparent transition-colors duration-300">
       <div class="flex items-center gap-3">
-        <button class="text-gray-400 hover:text-white">
+        <!-- Hamburger Menu Button (Redirects to Settings/Menu tab) -->
+        <button onclick="switchTab('menu')" class="text-gray-400 hover:text-white">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
         <div>
@@ -87,7 +88,7 @@
       </button>
     </header>
 
-    <!-- Search Input (Hidden by default) -->
+    <!-- Search Input -->
     <div id="search-bar-container" class="hidden px-4 mb-3">
       <input id="search-input" type="text" placeholder="Search prompts..." class="w-full p-3.5 bg-[#1c1c1e] border border-gray-800 rounded-2xl outline-none text-sm focus:border-blue-500">
     </div>
@@ -434,7 +435,7 @@
             <img src="${p.img}" alt="" class="w-full h-full object-cover" loading="lazy">
             <button onclick="favToggle('${p.id}', event)" class="absolute top-3 right-3 p-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white hover:scale-110 transition-transform">
               <svg class="w-5 h-5 ${isFav ? 'fill-red-500 text-red-500' : 'text-white'}" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
               </svg>
             </button>
           </div>
@@ -465,7 +466,7 @@
       renderPrompts();
     };
 
-    // Modern capsule bottom navigation renderer (Using solid vector standard SVGs)
+    // Modern capsule bottom navigation renderer
     function renderBottomNav() {
       const container = document.getElementById('bottom-nav');
       
@@ -525,7 +526,7 @@
       const settingsScreen = document.getElementById('user-settings-screen');
       const pageTitleSection = document.getElementById('page-title-section');
 
-      // Close search bar on navigation
+      // Close search bar and clear text on navigation
       isSearchActive = false;
       document.getElementById('search-bar-container').classList.add('hidden');
       document.getElementById('search-input').value = '';
@@ -566,7 +567,7 @@
       }
     };
 
-    // Toggle search container visibility
+    // Toggle search container visibility and auto-clear text on hide
     window.toggleSearch = function() {
       isSearchActive = !isSearchActive;
       const container = document.getElementById('search-bar-container');
@@ -577,7 +578,7 @@
         input.focus();
       } else {
         container.classList.add('hidden');
-        input.value = '';
+        input.value = ''; // Auto-clears input value
         renderPrompts();
       }
     };
@@ -612,10 +613,16 @@
       `;
     }
 
-    // Close preview view
+    // Close preview view and clear search container and typed text
     window.closePreview = function() {
       document.getElementById('preview-view').classList.add('hidden');
       document.getElementById('user-view').classList.remove('hidden');
+      
+      // Auto-clear search on back action
+      isSearchActive = false;
+      document.getElementById('search-bar-container').classList.add('hidden');
+      document.getElementById('search-input').value = ''; 
+      
       renderPrompts();
     };
 
