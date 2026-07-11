@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prompt House</title>
-  <!-- Tailwind CSS CDN (ডিজাইনের জন্য) -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* স্ক্রলবার হাইড করার জন্য অতিরিক্ত সিএসএস */
@@ -17,15 +17,15 @@
     }
   </style>
 </head>
-<body class="bg-[#121212] text-white font-sans min-h-screen">
+<body class="bg-[#121212] text-white font-sans min-h-screen flex justify-center">
 
   <!-- ==================================================== -->
   <!-- ১. ইউজার অ্যাপ ভিউ (User App View) -->
   <!-- ==================================================== -->
-  <div id="user-view" class="w-full max-w-md mx-auto flex flex-col relative pb-20 select-none min-h-screen bg-[#121212] shadow-2xl">
+  <div id="user-view" class="w-full max-w-md flex flex-col relative pb-28 select-none min-h-screen bg-[#121212] shadow-2xl">
     
-    <!-- হেডার -->
-    <header id="user-header" class="p-4 flex justify-between items-center sticky top-0 bg-[#121212] z-10">
+    <!-- ডাইনামিক হেডার (হোম ট্যাবের জন্য) -->
+    <header id="user-header" class="p-4 flex justify-between items-center bg-[#121212] sticky top-0 z-10">
       <div class="flex items-center gap-3">
         <button class="text-gray-400 hover:text-white">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -40,98 +40,106 @@
       </button>
     </header>
 
-    <!-- ক্যাটাগরি চিপস (অনুভূমিক স্ক্রল) -->
+    <!-- ক্যাটাগরি চিপস (হোমে দেখাবে) -->
     <div id="category-chips-container" class="flex gap-2 overflow-x-auto px-4 py-2 no-scrollbar scroll-smooth">
-      <!-- জাভাস্ক্রিপ্ট দিয়ে ডাইনামিকালি লোড হবে -->
+      <!-- ডাইনামিকালি লোড হবে -->
     </div>
 
-    <!-- কন্টেন্ট এরিয়া (হোম, ডেইলি, ফেভারিট, সেটিংস) -->
+    <!-- কন্টেন্ট এরিয়া -->
     <main class="flex-1 p-4">
-      <!-- হোম বা ডেইলি গ্রিড -->
+      <!-- ডাইনামিক পেজ টাইটেল (ডেইলি ও ফেভারিট ট্যাবের জন্য) -->
+      <div id="page-title-section" class="hidden mb-6">
+        <h2 id="page-main-title" class="text-2xl font-bold">Daily Updates</h2>
+        <p id="page-sub-title" class="text-xs text-gray-400">8 Daily Prompts</p>
+      </div>
+
+      <!-- প্রম্পট ইমেজ গ্রিড -->
       <div id="prompts-grid" class="grid grid-cols-2 gap-3">
-        <!-- ইমেজ কার্ডগুলো এখানে লোড হবে -->
+        <!-- ইমেজ কার্ডগুলো লোড হবে -->
       </div>
 
       <!-- সেটিংস স্ক্রিন (ট্যাব ৪) -->
       <div id="user-settings-screen" class="hidden flex flex-col">
+        <!-- কম্পাস লোগো ও সেটিংস হেডার -->
         <div class="flex flex-col items-center py-6">
-          <div class="w-16 h-16 rounded-full bg-[#0066cc]/20 flex items-center justify-center text-[#0066cc] mb-3">
-            <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          <div class="w-16 h-16 rounded-full bg-[#002b5c] flex items-center justify-center text-[#0a84ff] mb-3 shadow-lg">
+            <!-- কম্পাস আইকন (স্ক্রিনশটের মতো) -->
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14.59L10.41 14 10 10.41 13.59 12 14 15.59zM12 4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 1c3.87 0 7 3.13 7 7s-3.13 7-7 7-7-3.13-7-7 3.13-7 7-7z"/>
+            </svg>
           </div>
-          <h2 class="text-2xl font-bold">Settings</h2>
+          <h2 class="text-2xl font-bold tracking-tight">Settings</h2>
         </div>
-        <p class="text-xs text-gray-500 uppercase font-semibold mb-2 tracking-wider">App Actions</p>
-        <div class="bg-[#1c1c1e] rounded-2xl overflow-hidden mb-6">
-          <div class="flex items-center justify-between p-4 border-b border-gray-800 cursor-pointer hover:bg-white/5">
+
+        <!-- অ্যাকশন লিস্ট -->
+        <p class="text-xs text-gray-500 uppercase font-bold mb-2 tracking-wider">App Actions</p>
+        <div class="bg-[#1c1c1e] rounded-[24px] overflow-hidden mb-6 border border-gray-800/40">
+          <div class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
-              <span class="p-2 rounded-xl bg-blue-500/10 text-blue-500">🕒</span>
-              <span>History</span>
+              <span class="p-2.5 rounded-xl bg-blue-500/10 text-blue-500 text-lg">🕒</span>
+              <span class="text-sm font-semibold">History</span>
             </div>
-            <span class="text-gray-500">➔</span>
+            <span class="text-gray-600 text-xs">➔</span>
           </div>
-          <a id="follow-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800 cursor-pointer hover:bg-white/5">
+          <a id="follow-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
-              <span class="p-2 rounded-xl bg-pink-500/10 text-pink-500">👤</span>
-              <span>Follow Me</span>
+              <span class="p-2.5 rounded-xl bg-pink-500/10 text-pink-500 text-lg">👤</span>
+              <span class="text-sm font-semibold">Follow Me</span>
             </div>
-            <span class="text-gray-500">➔</span>
+            <span class="text-gray-600 text-xs">➔</span>
           </a>
-          <div class="flex items-center justify-between p-4 border-b border-gray-800 cursor-pointer hover:bg-white/5">
+          <div class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
-              <span class="p-2 rounded-xl bg-teal-500/10 text-teal-500">❓</span>
-              <span>How to use?</span>
+              <span class="p-2.5 rounded-xl bg-teal-500/10 text-teal-500 text-lg">❓</span>
+              <span class="text-sm font-semibold">How to use?</span>
             </div>
-            <span class="text-gray-500">➔</span>
+            <span class="text-gray-600 text-xs">➔</span>
+          </div>
+          <div class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
+            <div class="flex items-center gap-3">
+              <span class="p-2.5 rounded-xl bg-orange-500/10 text-orange-500 text-lg">🔗</span>
+              <span class="text-sm font-semibold">Share The app</span>
+            </div>
+            <span class="text-gray-600 text-xs">➔</span>
           </div>
           <div class="flex items-center justify-between p-4">
             <div class="flex items-center gap-3">
-              <span class="p-2 rounded-xl bg-purple-500/10 text-purple-500">🌙</span>
-              <span>Dark Theme</span>
+              <span class="p-2.5 rounded-xl bg-purple-500/10 text-purple-500 text-lg">🌙</span>
+              <span class="text-sm font-semibold">Dark Theme</span>
             </div>
+            <!-- কাস্টম মডার্ন সুইচ টগল -->
             <div class="w-11 h-6 flex items-center bg-[#0066cc] rounded-full p-1 cursor-pointer">
               <div class="bg-white w-4 h-4 rounded-full translate-x-5" />
             </div>
           </div>
         </div>
-        <p class="text-xs text-gray-500 uppercase font-semibold mb-2 tracking-wider">Legal & Info</p>
-        <div class="bg-[#1c1c1e] rounded-2xl overflow-hidden">
-          <div class="flex items-center justify-between p-4 border-b border-gray-800 cursor-pointer hover:bg-white/5">
+
+        <p class="text-xs text-gray-500 uppercase font-bold mb-2 tracking-wider">Legal & Info</p>
+        <div class="bg-[#1c1c1e] rounded-[24px] overflow-hidden border border-gray-800/40">
+          <div class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
-              <span class="p-2 rounded-xl bg-yellow-500/10 text-yellow-500">⭐</span>
-              <span>Rate Us</span>
+              <span class="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-500 text-lg">⭐</span>
+              <span class="text-sm font-semibold">Rate Us</span>
             </div>
-            <span class="text-gray-500">➔</span>
+            <span class="text-gray-600 text-xs">➔</span>
           </div>
           <a id="support-link" href="#" target="_blank" class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
-              <span class="p-2 rounded-xl bg-red-500/10 text-red-500">📞</span>
-              <span>Contact Us</span>
+              <span class="p-2.5 rounded-xl bg-red-500/10 text-red-500 text-lg">📞</span>
+              <span class="text-sm font-semibold">Contact Us</span>
             </div>
-            <span class="text-gray-500">➔</span>
+            <span class="text-gray-600 text-xs">➔</span>
           </a>
         </div>
       </div>
     </main>
 
-    <!-- বটম নেভিগেশন বার -->
-    <nav class="absolute bottom-0 left-0 right-0 h-20 bg-[#1c1c1e]/95 backdrop-blur-md border-t border-gray-800 flex justify-around items-center px-2 z-10">
-      <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 w-16 text-[#0066cc]">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        <span class="text-[10px] font-medium">Home</span>
-      </button>
-      <button onclick="switchTab('daily')" id="nav-daily" class="flex flex-col items-center gap-1 w-16 text-gray-500">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
-        <span class="text-[10px] font-medium">Daily</span>
-      </button>
-      <button onclick="switchTab('favorite')" id="nav-favorite" class="flex flex-col items-center gap-1 w-16 text-gray-500">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        <span class="text-[10px] font-medium">Favorite</span>
-      </button>
-      <button onclick="switchTab('menu')" id="nav-menu" class="flex flex-col items-center gap-1 w-16 text-gray-500">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-        <span class="text-[10px] font-medium">Menu</span>
-      </button>
-    </nav>
+    <!-- মডার্ন ফ্লোটিং বাবল নেভিগেশন বার (Floating Bubble Capsule Nav) -->
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] z-50">
+      <nav id="bottom-nav" class="bg-[#1c1c1e]/90 backdrop-blur-md border border-gray-800 rounded-full py-3 px-6 flex justify-between items-center shadow-2xl">
+        <!-- জাভাস্ক্রিপ্ট দিয়ে ডাইনামিক মডার্ন বাবল নেভিগেশন লোড হবে -->
+      </nav>
+    </div>
   </div>
 
   <!-- ==================================================== -->
@@ -144,17 +152,17 @@
       </button>
       <h1 class="text-lg font-bold">Preview Prompt</h1>
       <button id="preview-fav-btn" class="p-1">
-        <!-- SVG ডায়নামিক্যালি সেট হবে -->
+        <!-- SVG ডাইনামিক্যালি লোড হবে -->
       </button>
     </header>
 
-    <div class="rounded-3xl overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] mb-6">
+    <div class="rounded-[28px] overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] mb-6">
       <img id="preview-img" src="" alt="" class="w-full h-full object-cover">
     </div>
 
-    <!-- অ্যাকশন এরিয়া -->
+    <!-- অ্যাকশন বাটন এরিয়া -->
     <div class="mb-6">
-      <button id="generate-btn" class="w-full py-4 bg-[#0066cc] text-white font-semibold rounded-2xl hover:bg-[#0052a3]">
+      <button id="generate-btn" class="w-full py-4 bg-[#0066cc] text-white font-semibold rounded-2xl hover:bg-[#0052a3] transition-all shadow-lg shadow-blue-500/10">
         Generate Prompt
       </button>
       
@@ -162,34 +170,33 @@
         <div id="prompt-text" class="p-4 bg-[#1c1c1e] rounded-2xl border border-gray-800 text-sm text-gray-300 leading-relaxed">
           <!-- প্রম্পট টেক্সট -->
         </div>
-        <button id="copy-btn" class="w-full py-4 bg-transparent border border-[#0066cc] text-[#0066cc] font-semibold rounded-2xl flex items-center justify-center gap-2 hover:bg-[#0066cc]/10">
+        <button id="copy-btn" class="w-full py-4 bg-transparent border border-[#0066cc] text-[#0066cc] font-semibold rounded-2xl flex items-center justify-center gap-2 hover:bg-[#0066cc]/10 transition-all">
           <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
           <span id="copy-btn-text">Copy Prompt</span>
         </button>
       </div>
     </div>
 
-    <!-- এক্সট্রা অপশন -->
-    <div class="bg-[#1c1c1e] rounded-2xl overflow-hidden">
-      <a id="follow-link-preview" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800">
+    <div class="bg-[#1c1c1e] rounded-[24px] overflow-hidden border border-gray-800/40">
+      <a id="follow-link-preview" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50">
         <div class="flex items-center gap-3">
-          <span class="p-2 rounded-xl bg-pink-500/10 text-pink-500">👤</span>
+          <span class="p-2.5 rounded-xl bg-pink-500/10 text-pink-500 text-lg">👤</span>
           <div class="text-left">
             <p class="font-semibold text-sm">Follow Me</p>
             <p class="text-xs text-gray-500">Stay updated with latest prompts</p>
           </div>
         </div>
-        <span class="text-gray-500">➔</span>
+        <span class="text-gray-500 text-xs">➔</span>
       </a>
       <div class="flex items-center justify-between p-4">
         <div class="flex items-center gap-3">
-          <span class="p-2 rounded-xl bg-teal-500/10 text-teal-500">❓</span>
+          <span class="p-2.5 rounded-xl bg-teal-500/10 text-teal-500 text-lg">❓</span>
           <div class="text-left">
             <p class="font-semibold text-sm">How to use?</p>
             <p class="text-xs text-gray-500">Learn to get the most out of it</p>
           </div>
         </div>
-        <span class="text-gray-500">➔</span>
+        <span class="text-gray-500 text-xs">➔</span>
       </div>
     </div>
   </div>
@@ -352,16 +359,15 @@
   </div>
 
   <!-- ==================================================== -->
-  <!-- ৫. ফায়ারবেস স্ক্রিপ্ট এবং লজিক (Firebase Script) -->
+  <!-- ৫. ফায়ারবেস এবং লজিক স্ক্রিপ্ট -->
   <!-- ==================================================== -->
   <script type="module">
-    // CDN থেকে ফায়ারবেস মডিউল লোড করা হচ্ছে
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
       getFirestore, collection, addDoc, getDocs, deleteDoc, doc, setDoc, getDoc, onSnapshot 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // আপনার ফায়ারবেস কনফিগারেশন
+    // ফায়ারবেস কনফিগারেশন
     const firebaseConfig = {
       apiKey: "AIzaSyBP9d5ekOd0zvO-D7Fq8aXmNoS2aqryvVA",
       authDomain: "tg-bot-prompt-copy.firebaseapp.com",
@@ -438,7 +444,7 @@
       document.getElementById('adsgram-id-input').value = configSettings.adsgramBlockId;
       document.getElementById('monetag-id-input').value = configSettings.monetagTagId;
 
-      // Monetag ও Adsgram স্ক্রিপ্ট ইন্জেক্ট
+      // Monetag স্ক্রিপ্ট ইন্জেক্ট
       injectMonetag(configSettings.monetagTagId);
     }
 
@@ -463,10 +469,10 @@
             .then(() => resolve(true))
             .catch((err) => {
               console.error(err);
-              resolve(true); // এরর আসলেও ব্যবহারকারীকে প্রম্পট দেখানো হবে
+              resolve(true);
             });
         } else {
-          resolve(true); // কোনো অ্যাড না থাকলে সরাসরি প্রম্পট শো করবে
+          resolve(true);
         }
       });
     }
@@ -474,10 +480,10 @@
     // ইউজার ভিউ ক্যাটাগরি চিপস রেন্ডার
     function renderCategoryChips() {
       const container = document.getElementById('category-chips-container');
-      let html = `<button onclick="filterCategory('Home')" class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === 'Home' ? 'bg-[#0066cc] text-white' : 'bg-[#222222] text-gray-300'}">Home</button>`;
+      let html = `<button onclick="filterCategory('Home')" class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === 'Home' ? 'bg-[#0066cc] text-white shadow-lg shadow-blue-500/10' : 'bg-[#222222] text-gray-300'}">Home</button>`;
       
       categories.forEach(c => {
-        html += `<button onclick="filterCategory('${c.name}')" class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === c.name ? 'bg-[#0066cc] text-white' : 'bg-[#222222] text-gray-300'}">${c.name}</button>`;
+        html += `<button onclick="filterCategory('${c.name}')" class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === c.name ? 'bg-[#0066cc] text-white shadow-lg shadow-blue-500/10' : 'bg-[#222222] text-gray-300'}">${c.name}</button>`;
       });
       container.innerHTML = html;
     }
@@ -501,7 +507,7 @@
       filtered.forEach(p => {
         const isFav = favorites.includes(p.id);
         html += `
-          <div onclick="viewPrompt('${p.id}')" class="relative rounded-2xl overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] cursor-pointer hover:scale-[1.02] transition-transform">
+          <div onclick="viewPrompt('${p.id}')" class="relative rounded-[24px] overflow-hidden border border-gray-800/60 bg-[#1e1e1e] aspect-[3/4] cursor-pointer hover:scale-[1.02] transition-transform">
             <img src="${p.img}" alt="" class="w-full h-full object-cover" loading="lazy">
             <button onclick="favToggle('${p.id}', event)" class="absolute top-3 right-3 p-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white hover:scale-110 transition-transform">
               <svg class="w-5 h-5 ${isFav ? 'fill-red-500 text-red-500' : 'text-white'}" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -536,47 +542,105 @@
       renderPrompts();
     };
 
-    // মেইন ট্যাব সুইচ
-    window.switchTab = function(tab) {
-      currentTab = tab;
+    // ডাইনামিক মডার্ন বাবল নেভিগেশন রেন্ডারার (Bubble Capsule Nav)
+    function renderBottomNav() {
+      const container = document.getElementById('bottom-nav');
       
-      // হাইলাইট ক্লাস পরিবর্তন
-      ['home', 'daily', 'favorite', 'menu'].forEach(t => {
-        const btn = document.getElementById(`nav-${t}`);
-        if (t === tab) {
-          btn.classList.add('text-[#0066cc]');
-          btn.classList.remove('text-gray-500');
+      const tabs = [
+        { 
+          id: 'home', 
+          label: 'Home', 
+          icon: `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>`
+        },
+        { 
+          id: 'daily', 
+          label: 'Daily', 
+          icon: `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>`
+        },
+        { 
+          id: 'favorite', 
+          label: 'Favorite', 
+          icon: `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+        },
+        { 
+          id: 'menu', 
+          label: 'Menu', 
+          icon: `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>`
+        }
+      ];
+
+      let html = '';
+      tabs.forEach(t => {
+        const isActive = currentTab === t.id;
+        if (isActive) {
+          html += `
+            <button onclick="switchTab('${t.id}')" class="flex items-center gap-2 bg-[#0066cc]/20 text-[#0066cc] px-4 py-2 rounded-full transition-all duration-300 scale-105">
+              ${t.icon}
+              <span class="text-xs font-bold">${t.label}</span>
+            </button>
+          `;
         } else {
-          btn.classList.remove('text-[#0066cc]');
-          btn.classList.add('text-gray-500');
+          html += `
+            <button onclick="switchTab('${t.id}')" class="flex items-center justify-center p-2.5 text-gray-500 hover:text-gray-300 transition-all duration-300">
+              ${t.icon}
+            </button>
+          `;
         }
       });
 
-      // স্ক্রিন ভিউ পরিবর্তন
+      container.innerHTML = html;
+    }
+
+    // মেইন ট্যাব সুইচ লজিক
+    window.switchTab = function(tab) {
+      currentTab = tab;
+      renderBottomNav(); // নেভিগেশন বার আপডেট করা
+
       const header = document.getElementById('user-header');
       const chips = document.getElementById('category-chips-container');
       const grid = document.getElementById('prompts-grid');
       const settingsScreen = document.getElementById('user-settings-screen');
+      const pageTitleSection = document.getElementById('page-title-section');
 
-      if (tab === 'menu') {
+      // ট্যাব টাইটেল সেটিংস
+      if (tab === 'daily') {
+        header.classList.add('hidden');
+        chips.classList.add('hidden');
+        grid.classList.remove('hidden');
+        settingsScreen.classList.add('hidden');
+        
+        pageTitleSection.classList.remove('hidden');
+        document.getElementById('page-main-title').innerText = "Daily Updates";
+        document.getElementById('page-sub-title').innerText = "8 Daily Prompts";
+        renderPrompts();
+      } else if (tab === 'favorite') {
+        header.classList.add('hidden');
+        chips.classList.add('hidden');
+        grid.classList.remove('hidden');
+        settingsScreen.classList.add('hidden');
+        
+        pageTitleSection.classList.remove('hidden');
+        document.getElementById('page-main-title').innerText = "Favorite Prompts";
+        document.getElementById('page-sub-title').innerText = `${favorites.length} Favorite Prompts`;
+        renderPrompts();
+      } else if (tab === 'menu') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
         grid.classList.add('hidden');
+        pageTitleSection.classList.add('hidden');
         settingsScreen.classList.remove('hidden');
       } else {
+        // Home ট্যাব
         header.classList.remove('hidden');
-        if (tab === 'home') {
-          chips.classList.remove('hidden');
-        } else {
-          chips.classList.add('hidden');
-        }
+        chips.classList.remove('hidden');
         grid.classList.remove('hidden');
+        pageTitleSection.classList.add('hidden');
         settingsScreen.classList.add('hidden');
         renderPrompts();
       }
     };
 
-    // প্রম্পট ভিউ
+    // প্রম্পট প্রিভিউ ওপেন করা
     window.viewPrompt = function(id) {
       activePrompt = prompts.find(p => p.id === id);
       if (!activePrompt) return;
@@ -587,14 +651,13 @@
       document.getElementById('preview-img').src = activePrompt.img;
       document.getElementById('prompt-text').innerText = activePrompt.promptText;
 
-      // জেনারেট স্টেট রিসেট
       document.getElementById('generate-btn').classList.remove('hidden');
       document.getElementById('prompt-box-container').classList.add('hidden');
 
       updatePreviewFavBtn();
     };
 
-    // প্রিভিউ স্ক্রিনে হার্ট আইকন স্ট্যাটাস আপডেট
+    // প্রিভিউ স্ক্রিনে হার্ট আইকন সেটিংস
     function updatePreviewFavBtn() {
       const isFav = favorites.includes(activePrompt.id);
       document.getElementById('preview-fav-btn').innerHTML = `
@@ -634,7 +697,6 @@
     // ৫.১ অ্যাডমিন প্যানেল লজিক
     // ==========================================
     
-    // ইউআরএল হ্যাশ ডিটেক্ট করে অ্যাডমিন মোড অন করা
     function checkHash() {
       if (window.location.hash === '#admin') {
         document.getElementById('user-view').classList.add('hidden');
@@ -664,7 +726,6 @@
     // অ্যাডমিন ট্যাব সুইচ
     window.switchAdminTab = function(tab) {
       currentAdminTab = tab;
-      // সাইডবার হাইলাইট
       ['dashboard', 'categories', 'prompts', 'ads', 'settings'].forEach(t => {
         const btn = document.getElementById(`adm-nav-${t}`);
         if (t === tab) {
@@ -674,7 +735,6 @@
         }
       });
 
-      // প্যানেল শো/হাইড
       ['dashboard', 'categories', 'prompts', 'ads', 'settings'].forEach(t => {
         const sec = document.getElementById(`panel-${t}`);
         if (t === tab) sec.classList.remove('hidden');
@@ -819,8 +879,9 @@
 
     // ডাইনামিক ডাটা সিঙ্ক ইনিশিয়ালাইজেশন
     initDataSync();
+    renderBottomNav(); // প্রথমবার বার রেন্ডার করা
     
-    // উইন্ডো অবজেক্টে গ্লোবাল ফাংশনগুলো এক্সপোর্ট করা (যাতে inline HTML onClick থেকে কাজ করে)
+    // উইন্ডো অবজেক্টে গ্লোবাল ফাংশন এক্সপোর্ট করা
     window.switchTab = switchTab;
     window.filterCategory = filterCategory;
     window.switchAdminTab = switchAdminTab;
