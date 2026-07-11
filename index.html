@@ -206,7 +206,7 @@
       </div>
     </main>
 
-    <!-- Floating Navigation Bar (Locked with fixed) -->
+    <!-- Floating Navigation Bar -->
     <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] z-50">
       <nav id="bottom-nav" class="bg-[#1c1c1e]/90 backdrop-blur-md border border-gray-800/80 rounded-full py-3 px-6 flex justify-between items-center shadow-2xl transition-colors duration-300">
         <!-- Loaded dynamically via JS -->
@@ -531,11 +531,14 @@
       const settingsScreen = document.getElementById('user-settings-screen');
       const pageTitleSection = document.getElementById('page-title-section');
 
-      // Close search bar and clear text on navigation (Zero-Jump transition)
+      // Close search bar and clear text dynamically
       isSearchActive = false;
+      const input = document.getElementById('search-input');
+      input.blur(); // Dismiss keyboard smoothly
+      
       document.getElementById('header-main-content').classList.remove('hidden');
       document.getElementById('header-search-content').classList.add('hidden');
-      document.getElementById('search-input').value = '';
+      input.value = '';
       document.getElementById('search-btn-icon').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>`;
 
       if (tab === 'daily') {
@@ -574,7 +577,7 @@
       }
     };
 
-    // Toggle search inside the header (Zero-Jump design)
+    // Toggle search inside the header (Zero-Jump & Smooth Keyboard Collapse)
     window.toggleSearch = function() {
       isSearchActive = !isSearchActive;
       const mainContent = document.getElementById('header-main-content');
@@ -589,12 +592,17 @@
         // Change icon to close (X)
         searchIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>`;
       } else {
-        mainContent.classList.remove('hidden');
-        searchContent.classList.add('hidden');
-        input.value = '';
-        // Change icon back to magnifying glass
-        searchIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>`;
-        renderPrompts();
+        input.blur(); // Dismiss virtual keyboard first to prevent layout shifts
+        
+        // Minor delay to let the browser collapse the keyboard smoothly before modifying DOM
+        setTimeout(() => {
+          mainContent.classList.remove('hidden');
+          searchContent.classList.add('hidden');
+          input.value = '';
+          // Change icon back to magnifying glass
+          searchIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>`;
+          renderPrompts();
+        }, 50);
       }
     };
 
@@ -628,16 +636,18 @@
       `;
     }
 
-    // Close preview view and clear search container / typed text
+    // Close preview view and clear search / dismiss keyboard
     window.closePreview = function() {
+      const input = document.getElementById('search-input');
+      input.blur(); // Dismiss virtual keyboard smoothly first
+      
       document.getElementById('preview-view').classList.add('hidden');
       document.getElementById('user-view').classList.remove('hidden');
       
-      // Auto-clear search and restore normal header
       isSearchActive = false;
       document.getElementById('header-main-content').classList.remove('hidden');
       document.getElementById('header-search-content').classList.add('hidden');
-      document.getElementById('search-input').value = ''; 
+      input.value = ''; 
       document.getElementById('search-btn-icon').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>`;
       
       renderPrompts();
