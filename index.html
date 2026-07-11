@@ -1,242 +1,831 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Prompt Bot</title>
-    <!-- Tailwind CSS (ডিজাইনের জন্য) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React & Babel (কোড রান করার জন্য) -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <style>
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt House</title>
+  <!-- Tailwind CSS CDN (ডিজাইনের জন্য) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* স্ক্রলবার হাইড করার জন্য অতিরিক্ত সিএসএস */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
 </head>
-<body class="bg-[#0d0f12] text-white antialiased selection:bg-blue-500/30">
+<body class="bg-[#121212] text-white font-sans min-h-screen">
 
-    <div id="root"></div>
+  <!-- ==================================================== -->
+  <!-- ১. ইউজার অ্যাপ ভিউ (User App View) -->
+  <!-- ==================================================== -->
+  <div id="user-view" class="w-full max-w-md mx-auto flex flex-col relative pb-20 select-none min-h-screen bg-[#121212] shadow-2xl">
+    
+    <!-- হেডার -->
+    <header id="user-header" class="p-4 flex justify-between items-center sticky top-0 bg-[#121212] z-10">
+      <div class="flex items-center gap-3">
+        <button class="text-gray-400 hover:text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        <div>
+          <h1 id="app-title" class="text-xl font-bold tracking-wide">Prompt House</h1>
+          <p id="app-subtitle" class="text-xs text-gray-400">Welcome App</p>
+        </div>
+      </div>
+      <button class="text-gray-400 hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+      </button>
+    </header>
 
-    <script type="text/babel">
-        // গ্লোবাল সেটিংস এবং ডেটা
-        const globalSettings = {
-            appName: "AI Prompt Craft",
-            telegramLink: "https://t.me/yourchannel", 
-            contactLink: "https://t.me/yourusername"
-        };
+    <!-- ক্যাটাগরি চিপস (অনুভূমিক স্ক্রল) -->
+    <div id="category-chips-container" class="flex gap-2 overflow-x-auto px-4 py-2 no-scrollbar scroll-smooth">
+      <!-- জাভাস্ক্রিপ্ট দিয়ে ডাইনামিকালি লোড হবে -->
+    </div>
 
-        const samplePrompts = [
-            { id: 1, category: "Cinematic", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500", promptText: "Hyper-realistic 8K cinematic portrait of a cyber influencer, luxury neon lighting, high-fashion aesthetic." },
-            { id: 2, category: "Luxury", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500", promptText: "Ultra-modern luxury penthouse interior, glassmorphism design, cash stacks on marble table, 8K resolution." }
-        ];
+    <!-- কন্টেন্ট এরিয়া (হোম, ডেইলি, ফেভারিট, সেটিংস) -->
+    <main class="flex-1 p-4">
+      <!-- হোম বা ডেইলি গ্রিড -->
+      <div id="prompts-grid" class="grid grid-cols-2 gap-3">
+        <!-- ইমেজ কার্ডগুলো এখানে লোড হবে -->
+      </div>
 
-        function App() {
-            const [activeTab, setActiveTab] = React.useState('home');
-            const [selectedPrompt, setSelectedPrompt] = React.useState(null);
-            const [isPromptGenerated, setIsPromptGenerated] = React.useState(false);
-            const [copied, setCopied] = React.useState(false);
-            const [favorites, setFavorites] = React.useState([]);
+      <!-- সেটিংস স্ক্রিন (ট্যাব ৪) -->
+      <div id="user-settings-screen" class="hidden flex flex-col">
+        <div class="flex flex-col items-center py-6">
+          <div class="w-16 h-16 rounded-full bg-[#0066cc]/20 flex items-center justify-center text-[#0066cc] mb-3">
+            <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          </div>
+          <h2 class="text-2xl font-bold">Settings</h2>
+        </div>
+        <p class="text-xs text-gray-500 uppercase font-semibold mb-2 tracking-wider">App Actions</p>
+        <div class="bg-[#1c1c1e] rounded-2xl overflow-hidden mb-6">
+          <div class="flex items-center justify-between p-4 border-b border-gray-800 cursor-pointer hover:bg-white/5">
+            <div class="flex items-center gap-3">
+              <span class="p-2 rounded-xl bg-blue-500/10 text-blue-500">🕒</span>
+              <span>History</span>
+            </div>
+            <span class="text-gray-500">➔</span>
+          </div>
+          <a id="follow-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800 cursor-pointer hover:bg-white/5">
+            <div class="flex items-center gap-3">
+              <span class="p-2 rounded-xl bg-pink-500/10 text-pink-500">👤</span>
+              <span>Follow Me</span>
+            </div>
+            <span class="text-gray-500">➔</span>
+          </a>
+          <div class="flex items-center justify-between p-4 border-b border-gray-800 cursor-pointer hover:bg-white/5">
+            <div class="flex items-center gap-3">
+              <span class="p-2 rounded-xl bg-teal-500/10 text-teal-500">❓</span>
+              <span>How to use?</span>
+            </div>
+            <span class="text-gray-500">➔</span>
+          </div>
+          <div class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-3">
+              <span class="p-2 rounded-xl bg-purple-500/10 text-purple-500">🌙</span>
+              <span>Dark Theme</span>
+            </div>
+            <div class="w-11 h-6 flex items-center bg-[#0066cc] rounded-full p-1 cursor-pointer">
+              <div class="bg-white w-4 h-4 rounded-full translate-x-5" />
+            </div>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 uppercase font-semibold mb-2 tracking-wider">Legal & Info</p>
+        <div class="bg-[#1c1c1e] rounded-2xl overflow-hidden">
+          <div class="flex items-center justify-between p-4 border-b border-gray-800 cursor-pointer hover:bg-white/5">
+            <div class="flex items-center gap-3">
+              <span class="p-2 rounded-xl bg-yellow-500/10 text-yellow-500">⭐</span>
+              <span>Rate Us</span>
+            </div>
+            <span class="text-gray-500">➔</span>
+          </div>
+          <a id="support-link" href="#" target="_blank" class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5">
+            <div class="flex items-center gap-3">
+              <span class="p-2 rounded-xl bg-red-500/10 text-red-500">📞</span>
+              <span>Contact Us</span>
+            </div>
+            <span class="text-gray-500">➔</span>
+          </a>
+        </div>
+      </div>
+    </main>
 
-            const toggleFavorite = (id, e) => {
-                e.stopPropagation();
-                if (favorites.includes(id)) {
-                    setFavorites(favorites.filter(favId => favId !== id));
-                } else {
-                    setFavorites([...favorites, id]);
-                }
-            };
+    <!-- বটম নেভিগেশন বার -->
+    <nav class="absolute bottom-0 left-0 right-0 h-20 bg-[#1c1c1e]/95 backdrop-blur-md border-t border-gray-800 flex justify-around items-center px-2 z-10">
+      <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 w-16 text-[#0066cc]">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span class="text-[10px] font-medium">Home</span>
+      </button>
+      <button onclick="switchTab('daily')" id="nav-daily" class="flex flex-col items-center gap-1 w-16 text-gray-500">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
+        <span class="text-[10px] font-medium">Daily</span>
+      </button>
+      <button onclick="switchTab('favorite')" id="nav-favorite" class="flex flex-col items-center gap-1 w-16 text-gray-500">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span class="text-[10px] font-medium">Favorite</span>
+      </button>
+      <button onclick="switchTab('menu')" id="nav-menu" class="flex flex-col items-center gap-1 w-16 text-gray-500">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        <span class="text-[10px] font-medium">Menu</span>
+      </button>
+    </nav>
+  </div>
 
-            const handlePromptSelect = (prompt) => {
-                setSelectedPrompt(prompt);
-                setIsPromptGenerated(false);
-                setCopied(false);
-            };
+  <!-- ==================================================== -->
+  <!-- ২. প্রম্পট প্রিভিউ স্ক্রিন (Preview Screen) -->
+  <!-- ==================================================== -->
+  <div id="preview-view" class="hidden w-full max-w-md mx-auto flex flex-col p-4 bg-[#121212] min-h-screen">
+    <header class="flex justify-between items-center py-3 mb-4">
+      <button onclick="closePreview()" class="p-1 text-gray-400 hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+      </button>
+      <h1 class="text-lg font-bold">Preview Prompt</h1>
+      <button id="preview-fav-btn" class="p-1">
+        <!-- SVG ডায়নামিক্যালি সেট হবে -->
+      </button>
+    </header>
 
-            const handleGeneratePrompt = () => {
-                // এখানে আপনার Adsgram অ্যাড কোড ট্রিগার করতে পারেন
-                alert("Loading Ad... After ad, prompt will unlock!");
-                setIsPromptGenerated(true);
-            };
+    <div class="rounded-3xl overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] mb-6">
+      <img id="preview-img" src="" alt="" class="w-full h-full object-cover">
+    </div>
 
-            const handleCopy = (text) => {
-                navigator.clipboard.writeText(text);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-            };
+    <!-- অ্যাকশন এরিয়া -->
+    <div class="mb-6">
+      <button id="generate-btn" class="w-full py-4 bg-[#0066cc] text-white font-semibold rounded-2xl hover:bg-[#0052a3]">
+        Generate Prompt
+      </button>
+      
+      <div id="prompt-box-container" class="hidden space-y-4">
+        <div id="prompt-text" class="p-4 bg-[#1c1c1e] rounded-2xl border border-gray-800 text-sm text-gray-300 leading-relaxed">
+          <!-- প্রম্পট টেক্সট -->
+        </div>
+        <button id="copy-btn" class="w-full py-4 bg-transparent border border-[#0066cc] text-[#0066cc] font-semibold rounded-2xl flex items-center justify-center gap-2 hover:bg-[#0066cc]/10">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          <span id="copy-btn-text">Copy Prompt</span>
+        </button>
+      </div>
+    </div>
 
-            const favoriteItems = samplePrompts.filter(item => favorites.includes(item.id));
+    <!-- এক্সট্রা অপশন -->
+    <div class="bg-[#1c1c1e] rounded-2xl overflow-hidden">
+      <a id="follow-link-preview" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800">
+        <div class="flex items-center gap-3">
+          <span class="p-2 rounded-xl bg-pink-500/10 text-pink-500">👤</span>
+          <div class="text-left">
+            <p class="font-semibold text-sm">Follow Me</p>
+            <p class="text-xs text-gray-500">Stay updated with latest prompts</p>
+          </div>
+        </div>
+        <span class="text-gray-500">➔</span>
+      </a>
+      <div class="flex items-center justify-between p-4">
+        <div class="flex items-center gap-3">
+          <span class="p-2 rounded-xl bg-teal-500/10 text-teal-500">❓</span>
+          <div class="text-left">
+            <p class="font-semibold text-sm">How to use?</p>
+            <p class="text-xs text-gray-500">Learn to get the most out of it</p>
+          </div>
+        </div>
+        <span class="text-gray-500">➔</span>
+      </div>
+    </div>
+  </div>
 
-            return (
-                <div className="min-h-screen bg-[#0d0f12] text-gray-100 flex justify-center items-start p-0 sm:p-4">
-                    <div className="w-full max-w-md bg-[#121212] min-h-screen sm:min-h-[840px] sm:rounded-3xl shadow-2xl overflow-hidden border border-gray-800/50 relative flex flex-col pb-16">
-                        
-                        {!selectedPrompt ? (
-                            <>
-                                {/* হেডার বার */}
-                                <header className="p-4 bg-[#121212]/80 backdrop-blur-md border-b border-gray-800/60 sticky top-0 z-10 flex items-center justify-between">
-                                    <div className="flex items-center gap-2.5">
-                                        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">🚀</div>
-                                        <h1 className="text-base font-bold tracking-tight text-white">{globalSettings.appName}</h1>
-                                    </div>
-                                    <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
-                                </header>
+  <!-- ==================================================== -->
+  <!-- ৩. অ্যাডমিন লগইন পেজ (Admin Auth) -->
+  <!-- ==================================================== -->
+  <div id="admin-auth" class="hidden min-h-screen w-full flex items-center justify-center bg-[#0d0f12] text-white p-4">
+    <div class="w-full max-w-sm bg-[#161b22] border border-gray-800 p-6 rounded-2xl shadow-xl">
+      <h2 class="text-xl font-bold mb-4 text-center">Prompt House Admin</h2>
+      <p class="text-xs text-gray-400 mb-6 text-center">পাসওয়ার্ড দিয়ে প্রবেশ করুন</p>
+      <input id="admin-pass-input" type="password" placeholder="পাসওয়ার্ড..." class="w-full p-3 mb-4 bg-[#0d0f12] border border-gray-800 rounded-xl focus:border-blue-500 outline-none text-sm text-center">
+      <button id="admin-login-btn" class="w-full py-3 bg-[#0066cc] rounded-xl hover:bg-blue-600 font-semibold text-sm">লগইন</button>
+    </div>
+  </div>
 
-                                {/* মেইন কন্টেন্ট বডি */}
-                                <main className="flex-1 p-4 overflow-y-auto">
-                                    {/* ১. হোম ট্যাব */}
-                                    {activeTab === 'home' && (
-                                        <div className="space-y-5 animate-fadeIn">
-                                            <div className="grid grid-cols-2 gap-3.5">
-                                                {samplePrompts.map((item) => (
-                                                    <div 
-                                                        key={item.id} 
-                                                        onClick={() => handlePromptSelect(item)}
-                                                        className="group bg-[#161b22] border border-gray-800/80 rounded-2xl overflow-hidden cursor-pointer hover:border-gray-700 transition-all flex flex-col"
-                                                    >
-                                                        <div className="w-full aspect-[3/4] relative overflow-hidden bg-[#0d0f12]">
-                                                            <img src={item.img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                                                            <button 
-                                                                onClick={(e) => toggleFavorite(item.id, e)}
-                                                                className="absolute top-2.5 right-2.5 p-2 rounded-xl bg-black/40 backdrop-blur-md text-gray-300 hover:text-white transition-colors"
-                                                            >
-                                                                <svg className={`w-4 h-4 ${favorites.includes(item.id) ? 'fill-red-500 text-red-500' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                                                </svg>
-                                                            </button>
-                                                        </div>
-                                                        <div className="p-3 flex-1 flex flex-col justify-between gap-2">
-                                                            <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">{item.category}</span>
-                                                            <p className="text-xs text-gray-300 line-clamp-2 font-medium leading-relaxed">{item.promptText}</p>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
+  <!-- ==================================================== -->
+  <!-- ৪. অ্যাডমিন প্যানেল ভিউ (Admin Panel View) -->
+  <!-- ==================================================== -->
+  <div id="admin-view" class="hidden min-h-screen w-full flex bg-[#0d0f12] text-white">
+    <!-- সাইডবার -->
+    <aside class="w-64 bg-[#12161f]/80 border-r border-gray-800 p-5 flex flex-col justify-between h-screen sticky top-0">
+      <div>
+        <h2 class="text-lg font-bold tracking-wide mb-8">Prompt House <span class="text-xs text-blue-500">Admin</span></h2>
+        <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-3">Navigation</p>
+        <nav class="space-y-1 mb-8">
+          <button onclick="switchAdminTab('dashboard')" id="adm-nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-[#1f293d] text-blue-500">📊 Dashboard</button>
+          <button onclick="switchAdminTab('categories')" id="adm-nav-categories" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-[#12161f]">📁 Categories</button>
+          <button onclick="switchAdminTab('prompts')" id="adm-nav-prompts" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-[#12161f]">🖼️ Prompts</button>
+        </nav>
+        <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-3">System Config</p>
+        <nav class="space-y-1">
+          <button onclick="switchAdminTab('ads')" id="adm-nav-ads" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-[#12161f]">📢 Ads Manager</button>
+          <button onclick="switchAdminTab('settings')" id="adm-nav-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-[#12161f]">⚙️ Settings</button>
+        </nav>
+      </div>
+      <button onclick="logoutAdmin()" class="w-full py-3 bg-red-600/10 text-red-500 rounded-xl font-semibold text-sm">🚪 Logout</button>
+    </aside>
 
-                                    {/* ২. ডেইলি ট্যাব */}
-                                    {activeTab === 'daily' && (
-                                        <div className="space-y-4 animate-fadeIn text-center py-10">
-                                            <span className="text-4xl">⚡</span>
-                                            <h2 className="text-lg font-bold">Daily Hot Prompts</h2>
-                                            <p className="text-xs text-gray-400 max-w-xs mx-auto">প্রতিদিন নতুন নতুন ট্রেন্ডিং এআই প্রম্পট পেতে এই ট্যাবটি লক্ষ্য রাখুন।</p>
-                                        </div>
-                                    )}
+    <!-- মেইন অ্যাডমিন স্ক্রিন -->
+    <main class="flex-1 p-8 overflow-y-auto">
+      
+      <!-- প্যানেল ১: ড্যাশবোর্ড -->
+      <section id="panel-dashboard">
+        <h2 class="text-2xl font-bold mb-6">Dashboard Summary</h2>
+        <div class="grid grid-cols-3 gap-6">
+          <div class="p-6 bg-[#161b22] border border-gray-800 rounded-2xl">
+            <p class="text-xs text-gray-400 uppercase font-semibold mb-2">Total Categories</p>
+            <p id="stat-categories" class="text-4xl font-extrabold">0</p>
+          </div>
+          <div class="p-6 bg-[#161b22] border border-gray-800 rounded-2xl">
+            <p class="text-xs text-gray-400 uppercase font-semibold mb-2">Total Prompts</p>
+            <p id="stat-prompts" class="text-4xl font-extrabold">0</p>
+          </div>
+          <div class="p-6 bg-[#161b22] border border-gray-800 rounded-2xl">
+            <p class="text-xs text-gray-400 uppercase font-semibold mb-2">Ads Status</p>
+            <p id="stat-ads" class="text-lg font-bold text-green-500">Active</p>
+          </div>
+        </div>
+      </section>
 
-                                    {/* ৩. ফেভারিট ট্যাব */}
-                                    {activeTab === 'favorite' && (
-                                        <div className="space-y-4 animate-fadeIn">
-                                            <h2 className="text-lg font-bold">Your Bookmarks ({favoriteItems.length})</h2>
-                                            {favoriteItems.length === 0 ? (
-                                                <div className="text-center py-12 text-gray-500 text-xs">কোনো প্রম্পট ফেভারিট করা হয়নি।</div>
-                                            ) : (
-                                                <div className="grid grid-cols-2 gap-3.5">
-                                                    {favoriteItems.map((item) => (
-                                                        <div 
-                                                            key={item.id}
-                                                            onClick={() => handlePromptSelect(item)}
-                                                            className="relative rounded-2xl overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] cursor-pointer hover:scale-[1.02] transition-transform"
-                                                        >
-                                                            <img src={item.img} alt="" className="w-full h-full object-cover" />
-                                                            <button 
-                                                                onClick={(e) => toggleFavorite(item.id, e)} 
-                                                                className="absolute top-3 right-3 p-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white"
-                                                            >
-                                                                <svg className="w-5 h-5 fill-red-500 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                                                                    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                                                </svg>
-                                                            </button>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
+      <!-- প্যানেল ২: ক্যাটাগরি -->
+      <section id="panel-categories" class="hidden">
+        <h2 class="text-2xl font-bold mb-6">Manage Categories</h2>
+        <div class="flex gap-3 mb-8">
+          <input id="new-cat-input" type="text" placeholder="ক্যাটাগরির নাম..." class="flex-1 p-3 bg-[#161b22] border border-gray-800 rounded-xl outline-none text-sm">
+          <button id="add-cat-btn" class="px-6 py-3 bg-[#0066cc] font-semibold text-sm rounded-xl">যুক্ত করুন</button>
+        </div>
+        <div class="bg-[#161b22] border border-gray-800 rounded-2xl overflow-hidden">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="bg-[#1f242c] border-b border-gray-800 text-gray-400">
+                <th class="p-4 font-semibold">Category Name</th>
+                <th class="p-4 text-right font-semibold">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-categories-table">
+              <!-- ডাইনামিক ক্যাটাগরি রো -->
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-                                    {/* ৪. মেনু ট্যাব */}
-                                    {activeTab === 'menu' && (
-                                        <div className="space-y-4 animate-fadeIn">
-                                            <h2 className="text-lg font-bold">Menu & Support</h2>
-                                            <div className="bg-[#161b22] border border-gray-800 rounded-2xl p-4 space-y-3">
-                                                <a href={globalSettings.telegramLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3.5 bg-[#0d0f12] hover:bg-gray-800 rounded-xl transition-all">
-                                                    <span className="text-sm font-medium">Join Telegram Channel</span>
-                                                    <span className="text-gray-500 text-xs">➔</span>
-                                                </a>
-                                                <a href={globalSettings.contactLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3.5 bg-[#0d0f12] hover:bg-gray-800 rounded-xl transition-all">
-                                                    <span className="text-sm font-medium">Contact Support</span>
-                                                    <span className="text-gray-500 text-xs">➔</span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    )}
-                                </main>
+      <!-- প্যানেল ৩: প্রম্পটস -->
+      <section id="panel-prompts" class="hidden">
+        <h2 class="text-2xl font-bold mb-6">Manage Prompts</h2>
+        <div class="p-6 bg-[#161b22] border border-gray-800 rounded-2xl mb-8 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-gray-400 font-semibold mb-1.5">Cloudflare Image URL</label>
+              <input id="prompt-img-input" type="url" placeholder="https://cloudflare-link..." class="w-full p-3 bg-[#0d0f12] border border-gray-800 rounded-xl outline-none text-sm">
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 font-semibold mb-1.5">Select Category</label>
+              <select id="prompt-cat-select" class="w-full p-3 bg-[#0d0f12] border border-gray-800 rounded-xl outline-none text-sm text-gray-400">
+                <!-- অপশনগুলো ডাইনামিক হবে -->
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 font-semibold mb-1.5">Prompt Text</label>
+            <textarea id="prompt-text-input" rows="3" placeholder="প্রম্পট লিখুন..." class="w-full p-3 bg-[#0d0f12] border border-gray-800 rounded-xl outline-none text-sm"></textarea>
+          </div>
+          <button id="add-prompt-btn" class="w-full py-3 bg-[#0066cc] font-semibold text-sm rounded-xl">পোস্ট করুন</button>
+        </div>
+        <h3 class="text-lg font-bold mb-4">Prompt List</h3>
+        <div id="admin-prompts-list" class="grid grid-cols-3 gap-4">
+          <!-- প্রম্পট লিস্ট আসবে -->
+        </div>
+      </section>
 
-                                {/* বটম নেভিগেশন বার */}
-                                <nav className="absolute bottom-0 left-0 right-0 h-16 bg-[#121212]/90 backdrop-blur-md border-t border-gray-800/80 flex justify-around items-center z-20">
-                                    <button onClick={() => setActiveTab('home')} className={`flex flex-col items-center gap-1 text-[11px] font-semibold ${activeTab === 'home' ? 'text-blue-500' : 'text-gray-500'}`}>
-                                        <span>🏠</span><span>Home</span>
-                                    </button>
-                                    <button onClick={() => setActiveTab('daily')} className={`flex flex-col items-center gap-1 text-[11px] font-semibold ${activeTab === 'daily' ? 'text-blue-500' : 'text-gray-500'}`}>
-                                        <span>⚡</span><span>Daily</span>
-                                    </button>
-                                    <button onClick={() => setActiveTab('favorite')} className={`flex flex-col items-center gap-1 text-[11px] font-semibold ${activeTab === 'favorite' ? 'text-blue-500' : 'text-gray-500'}`}>
-                                        <span>❤️</span><span>Favorite</span>
-                                    </button>
-                                    <button onClick={() => setActiveTab('menu')} className={`flex flex-col items-center gap-1 text-[11px] font-semibold ${activeTab === 'menu' ? 'text-blue-500' : 'text-gray-500'}`}>
-                                        <span>⚙️</span><span>Menu</span>
-                                    </button>
-                                </nav>
-                            </>
-                        ) : (
-                            /* প্রম্পট ডিটেইলস স্ক্রিন */
-                            <div className="flex flex-col min-h-screen pb-6 animate-fadeIn">
-                                <header className="p-4 flex items-center justify-between bg-[#121212] border-b border-gray-800/50">
-                                    <button onClick={() => setSelectedPrompt(null)} className="text-sm font-semibold text-gray-400 hover:text-white flex items-center gap-1">
-                                        <span>◀</span> Back
-                                    </button>
-                                    <span className="text-[10px] px-2.5 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full font-bold uppercase">{selectedPrompt.category}</span>
-                                </header>
+      <!-- প্যানেল ৪: বিজ্ঞাপন -->
+      <section id="panel-ads" class="hidden">
+        <h2 class="text-2xl font-bold mb-6">Manage Advertisements</h2>
+        <div class="p-6 bg-[#161b22] border border-gray-800 rounded-2xl space-y-4">
+          <div>
+            <label class="block text-xs text-gray-400 font-semibold mb-1.5">Adsgram.io Block ID</label>
+            <input id="adsgram-id-input" type="text" placeholder="Block ID..." class="w-full p-3 bg-[#0d0f12] border border-gray-800 rounded-xl outline-none text-sm">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 font-semibold mb-1.5">Monetag Tag ID</label>
+            <input id="monetag-id-input" type="text" placeholder="Tag ID..." class="w-full p-3 bg-[#0d0f12] border border-gray-800 rounded-xl outline-none text-sm">
+          </div>
+          <button id="save-ads-btn" class="w-full py-3 bg-[#0066cc] font-semibold text-sm rounded-xl">বিজ্ঞাপন সেটিংস সেভ করুন</button>
+        </div>
+      </section>
 
-                                <div className="flex-1 p-4 space-y-5 overflow-y-auto">
-                                    <div className="w-full aspect-[3/4] rounded-2xl overflow-hidden border border-gray-800 bg-[#161b22]">
-                                        <img src={selectedPrompt.img} alt="" className="w-full h-full object-cover" />
-                                    </div>
+      <!-- প্যানেল ৫: সেটিংস -->
+      <section id="panel-settings" class="hidden">
+        <h2 class="text-2xl font-bold mb-6">Global Settings</h2>
+        <div class="p-6 bg-[#161b22] border border-gray-800 rounded-2xl space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-gray-400 font-semibold mb-1.5">App Name</label>
+              <input id="set-appname" type="text" class="w-full p-3 bg-[#0d0f12] border border-gray-800 rounded-xl outline-none text-sm">
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 font-semibold mb-1.5">Welcome Text</label>
+              <input id="set-welcometext" type="text" class="w-full p-3 bg-[#0d0f12] border border-gray-800 rounded-xl outline-none text-sm">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-gray-400 font-semibold mb-1.5">Telegram Link</label>
+              <input id="set-telegram" type="url" class="w-full p-3 bg-[#0d0f12] border border-gray-800 rounded-xl outline-none text-sm">
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400 font-semibold mb-1.5">Contact Link</label>
+              <input id="set-contact" type="url" class="w-full p-3 bg-[#0d0f12] border border-gray-800 rounded-xl outline-none text-sm">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs text-red-500 font-bold mb-1.5">Change Admin Password</label>
+            <input id="set-password" type="text" class="w-full p-3 bg-[#0d0f12] border border-red-900 rounded-xl outline-none text-sm">
+          </div>
+          <button id="save-settings-btn" class="w-full py-3 bg-[#0066cc] font-semibold text-sm rounded-xl">সবগুলো সেটিংস সেভ করুন</button>
+        </div>
+      </section>
+    </main>
+  </div>
 
-                                    <div className="bg-[#161b22] border border-gray-800 rounded-2xl p-4 min-h-[120px] flex flex-col justify-between relative overflow-hidden">
-                                        {!isPromptGenerated && (
-                                            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex flex-col items-center justify-center p-4 text-center z-10">
-                                                <span className="text-xl mb-1">🔒</span>
-                                                <p className="text-xs font-bold text-gray-200">Prompt Text is Locked</p>
-                                            </div>
-                                        )}
-                                        <div className={`text-xs leading-relaxed text-gray-300 ${!isPromptGenerated ? 'opacity-5 select-none' : ''}`}>
-                                            {selectedPrompt.promptText}
-                                        </div>
-                                        {isPromptGenerated && (
-                                            <button onClick={() => handleCopy(selectedPrompt.promptText)} className="mt-4 w-full py-2 bg-blue-600 rounded-xl text-xs font-bold text-white">
-                                                {copied ? '✓ Copied!' : '📋 Copy Prompt'}
-                                            </button>
-                                        )}
-                                    </div>
+  <!-- ==================================================== -->
+  <!-- ৫. ফায়ারবেস স্ক্রিপ্ট এবং লজিক (Firebase Script) -->
+  <!-- ==================================================== -->
+  <script type="module">
+    // CDN থেকে ফায়ারবেস মডিউল লোড করা হচ্ছে
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, getDocs, deleteDoc, doc, setDoc, getDoc, onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-                                    {!isPromptGenerated && (
-                                        <button onClick={handleGeneratePrompt} className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-xs tracking-wide">
-                                            🚀 Unlock & Generate Prompt
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        )}
+    // আপনার ফায়ারবেস কনফিগারেশন
+    const firebaseConfig = {
+      apiKey: "AIzaSyBP9d5ekOd0zvO-D7Fq8aXmNoS2aqryvVA",
+      authDomain: "tg-bot-prompt-copy.firebaseapp.com",
+      projectId: "tg-bot-prompt-copy",
+      storageBucket: "tg-bot-prompt-copy.firebasestorage.app",
+      messagingSenderId: "623834211164",
+      appId: "1:623834211164:web:6dd0bc4875945f99839799",
+      measurementId: "G-G0VWDYS8JE"
+    };
 
-                    </div>
-                </div>
-            );
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // অ্যাপ ডিক্লেয়ারড স্টেট
+    let currentTab = 'home';
+    let currentAdminTab = 'dashboard';
+    let selectedCategory = 'Home';
+    let categories = [];
+    let prompts = [];
+    let favorites = JSON.parse(localStorage.getItem('fav_prompts')) || [];
+    let activePrompt = null;
+    let configSettings = {
+      adminPassword: 'admin123',
+      appName: 'Prompt House',
+      welcomeText: 'Welcome App',
+      telegramLink: '#',
+      contactLink: '#',
+      adsgramBlockId: '',
+      monetagTagId: ''
+    };
+
+    // ফায়ারস্টোর থেকে ডাইনামিক ডেটা রিড ও সিঙ্ক করা
+    function initDataSync() {
+      // ক্যাটাগরি রিয়েল-টাইম লোড
+      onSnapshot(collection(db, "categories"), (snapshot) => {
+        categories = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderCategoryChips();
+        populateAdminCategoryDropdown();
+        renderAdminCategories();
+        updateDashboardStats();
+      });
+
+      // প্রম্পট রিয়েল-টাইম লোড
+      onSnapshot(collection(db, "prompts"), (snapshot) => {
+        prompts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderPrompts();
+        renderAdminPrompts();
+        updateDashboardStats();
+      });
+
+      // সেটিংস লোড করা
+      onSnapshot(doc(db, "config", "settings"), (snapshot) => {
+        if (snapshot.exists()) {
+          configSettings = { ...configSettings, ...snapshot.data() };
+          applySettings();
         }
+      });
+    }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+    // অ্যাপ সেটিংস প্রয়োগ করা
+    function applySettings() {
+      document.getElementById('app-title').innerText = configSettings.appName;
+      document.getElementById('app-subtitle').innerText = configSettings.welcomeText;
+      document.getElementById('follow-link').href = configSettings.telegramLink;
+      document.getElementById('support-link').href = configSettings.contactLink;
+      document.getElementById('follow-link-preview').href = configSettings.telegramLink;
+
+      // সেটিংস ফিল্ডে ভ্যালু সেট করা
+      document.getElementById('set-appname').value = configSettings.appName;
+      document.getElementById('set-welcometext').value = configSettings.welcomeText;
+      document.getElementById('set-telegram').value = configSettings.telegramLink;
+      document.getElementById('set-contact').value = configSettings.contactLink;
+      document.getElementById('set-password').value = configSettings.adminPassword;
+      document.getElementById('adsgram-id-input').value = configSettings.adsgramBlockId;
+      document.getElementById('monetag-id-input').value = configSettings.monetagTagId;
+
+      // Monetag ও Adsgram স্ক্রিপ্ট ইন্জেক্ট
+      injectMonetag(configSettings.monetagTagId);
+    }
+
+    // Monetag স্ক্রিপ্ট যুক্ত করা
+    function injectMonetag(tagId) {
+      if (!tagId) return;
+      const exist = document.getElementById('monetag-tag-script');
+      if (exist) exist.remove();
+      const s = document.createElement('script');
+      s.id = 'monetag-tag-script';
+      s.src = `https://growthofalphas.com/act/files/micro.tag.min.js?z=${tagId}`;
+      s.async = true;
+      document.body.appendChild(s);
+    }
+
+    // Adsgram.io স্ক্রিপ্ট ইনিশিয়ালাইজ ও অ্যাড চালানো
+    function showAdsgramAd() {
+      return new Promise((resolve) => {
+        if (window.Adsgram && configSettings.adsgramBlockId) {
+          const AdController = window.Adsgram.init({ blockId: configSettings.adsgramBlockId });
+          AdController.show()
+            .then(() => resolve(true))
+            .catch((err) => {
+              console.error(err);
+              resolve(true); // এরর আসলেও ব্যবহারকারীকে প্রম্পট দেখানো হবে
+            });
+        } else {
+          resolve(true); // কোনো অ্যাড না থাকলে সরাসরি প্রম্পট শো করবে
+        }
+      });
+    }
+
+    // ইউজার ভিউ ক্যাটাগরি চিপস রেন্ডার
+    function renderCategoryChips() {
+      const container = document.getElementById('category-chips-container');
+      let html = `<button onclick="filterCategory('Home')" class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === 'Home' ? 'bg-[#0066cc] text-white' : 'bg-[#222222] text-gray-300'}">Home</button>`;
+      
+      categories.forEach(c => {
+        html += `<button onclick="filterCategory('${c.name}')" class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === c.name ? 'bg-[#0066cc] text-white' : 'bg-[#222222] text-gray-300'}">${c.name}</button>`;
+      });
+      container.innerHTML = html;
+    }
+
+    // ইউজার ভিউ প্রম্পট রেন্ডার
+    function renderPrompts() {
+      const container = document.getElementById('prompts-grid');
+      let filtered = prompts;
+      if (currentTab === 'daily') {
+        filtered = prompts.slice(0, 8); // ডেইলি ট্যাবের জন্য ৮টি দেখাবে
+      } else if (currentTab === 'favorite') {
+        filtered = prompts.filter(p => favorites.includes(p.id));
+      } else {
+        // হোম ট্যাব (ফিল্টারড)
+        if (selectedCategory !== 'Home') {
+          filtered = prompts.filter(p => p.category === selectedCategory);
+        }
+      }
+
+      let html = '';
+      filtered.forEach(p => {
+        const isFav = favorites.includes(p.id);
+        html += `
+          <div onclick="viewPrompt('${p.id}')" class="relative rounded-2xl overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] cursor-pointer hover:scale-[1.02] transition-transform">
+            <img src="${p.img}" alt="" class="w-full h-full object-cover" loading="lazy">
+            <button onclick="favToggle('${p.id}', event)" class="absolute top-3 right-3 p-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white hover:scale-110 transition-transform">
+              <svg class="w-5 h-5 ${isFav ? 'fill-red-500 text-red-500' : 'text-white'}" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </button>
+          </div>
+        `;
+      });
+      container.innerHTML = html || `<p class="col-span-2 text-center text-gray-500 py-10 text-sm">কোনো প্রম্পট পাওয়া যায়নি!</p>`;
+    }
+
+    // ফেভারিট টগল ফাংশন
+    window.favToggle = function(id, e) {
+      if (e) e.stopPropagation();
+      if (favorites.includes(id)) {
+        favorites = favorites.filter(favId => favId !== id);
+      } else {
+        favorites.push(id);
+      }
+      localStorage.setItem('fav_prompts', JSON.stringify(favorites));
+      renderPrompts();
+      if (activePrompt && activePrompt.id === id) {
+        updatePreviewFavBtn();
+      }
+    };
+
+    // ক্যাটাগরি ফিল্টার
+    window.filterCategory = function(name) {
+      selectedCategory = name;
+      renderCategoryChips();
+      renderPrompts();
+    };
+
+    // মেইন ট্যাব সুইচ
+    window.switchTab = function(tab) {
+      currentTab = tab;
+      
+      // হাইলাইট ক্লাস পরিবর্তন
+      ['home', 'daily', 'favorite', 'menu'].forEach(t => {
+        const btn = document.getElementById(`nav-${t}`);
+        if (t === tab) {
+          btn.classList.add('text-[#0066cc]');
+          btn.classList.remove('text-gray-500');
+        } else {
+          btn.classList.remove('text-[#0066cc]');
+          btn.classList.add('text-gray-500');
+        }
+      });
+
+      // স্ক্রিন ভিউ পরিবর্তন
+      const header = document.getElementById('user-header');
+      const chips = document.getElementById('category-chips-container');
+      const grid = document.getElementById('prompts-grid');
+      const settingsScreen = document.getElementById('user-settings-screen');
+
+      if (tab === 'menu') {
+        header.classList.add('hidden');
+        chips.classList.add('hidden');
+        grid.classList.add('hidden');
+        settingsScreen.classList.remove('hidden');
+      } else {
+        header.classList.remove('hidden');
+        if (tab === 'home') {
+          chips.classList.remove('hidden');
+        } else {
+          chips.classList.add('hidden');
+        }
+        grid.classList.remove('hidden');
+        settingsScreen.classList.add('hidden');
+        renderPrompts();
+      }
+    };
+
+    // প্রম্পট ভিউ
+    window.viewPrompt = function(id) {
+      activePrompt = prompts.find(p => p.id === id);
+      if (!activePrompt) return;
+
+      document.getElementById('user-view').classList.add('hidden');
+      document.getElementById('preview-view').classList.remove('hidden');
+
+      document.getElementById('preview-img').src = activePrompt.img;
+      document.getElementById('prompt-text').innerText = activePrompt.promptText;
+
+      // জেনারেট স্টেট রিসেট
+      document.getElementById('generate-btn').classList.remove('hidden');
+      document.getElementById('prompt-box-container').classList.add('hidden');
+
+      updatePreviewFavBtn();
+    };
+
+    // প্রিভিউ স্ক্রিনে হার্ট আইকন স্ট্যাটাস আপডেট
+    function updatePreviewFavBtn() {
+      const isFav = favorites.includes(activePrompt.id);
+      document.getElementById('preview-fav-btn').innerHTML = `
+        <svg onclick="favToggle('${activePrompt.id}', event)" class="w-6 h-6 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-white'}" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+        </svg>
+      `;
+    }
+
+    // প্রিভিউ বন্ধ করা
+    window.closePreview = function() {
+      document.getElementById('preview-view').classList.add('hidden');
+      document.getElementById('user-view').classList.remove('hidden');
+      renderPrompts();
+    };
+
+    // জেনারেট প্রম্পট ক্লিক হ্যান্ডলার
+    document.getElementById('generate-btn').addEventListener('click', async () => {
+      document.getElementById('generate-btn').innerText = "Ad Loading...";
+      await showAdsgramAd(); // Adsgram ad চলবে
+      document.getElementById('generate-btn').innerText = "Generate Prompt";
+      
+      document.getElementById('generate-btn').classList.add('hidden');
+      document.getElementById('prompt-box-container').classList.remove('hidden');
+    });
+
+    // কপি প্রম্পট
+    document.getElementById('copy-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText(activePrompt.promptText);
+      document.getElementById('copy-btn-text').innerText = "Copied!";
+      setTimeout(() => {
+        document.getElementById('copy-btn-text').innerText = "Copy Prompt";
+      }, 2000);
+    });
+
+    // ==========================================
+    // ৫.১ অ্যাডমিন প্যানেল লজিক
+    // ==========================================
+    
+    // ইউআরএল হ্যাশ ডিটেক্ট করে অ্যাডমিন মোড অন করা
+    function checkHash() {
+      if (window.location.hash === '#admin') {
+        document.getElementById('user-view').classList.add('hidden');
+        document.getElementById('preview-view').classList.add('hidden');
+        document.getElementById('admin-auth').classList.remove('hidden');
+      } else {
+        document.getElementById('admin-auth').classList.add('hidden');
+        document.getElementById('admin-view').classList.add('hidden');
+        document.getElementById('user-view').classList.remove('hidden');
+      }
+    }
+    window.addEventListener('hashchange', checkHash);
+    checkHash();
+
+    // অ্যাডমিন লগইন
+    document.getElementById('admin-login-btn').addEventListener('click', () => {
+      const pass = document.getElementById('admin-pass-input').value;
+      if (pass === configSettings.adminPassword) {
+        document.getElementById('admin-auth').classList.add('hidden');
+        document.getElementById('admin-view').classList.remove('hidden');
+        switchAdminTab('dashboard');
+      } else {
+        alert("ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।");
+      }
+    });
+
+    // অ্যাডমিন ট্যাব সুইচ
+    window.switchAdminTab = function(tab) {
+      currentAdminTab = tab;
+      // সাইডবার হাইলাইট
+      ['dashboard', 'categories', 'prompts', 'ads', 'settings'].forEach(t => {
+        const btn = document.getElementById(`adm-nav-${t}`);
+        if (t === tab) {
+          btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-[#1f293d] text-blue-500";
+        } else {
+          btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-[#12161f]";
+        }
+      });
+
+      // প্যানেল শো/হাইড
+      ['dashboard', 'categories', 'prompts', 'ads', 'settings'].forEach(t => {
+        const sec = document.getElementById(`panel-${t}`);
+        if (t === tab) sec.classList.remove('hidden');
+        else sec.classList.add('hidden');
+      });
+    };
+
+    // ড্যাশবোর্ড স্ট্যাটাস আপডেট
+    function updateDashboardStats() {
+      document.getElementById('stat-categories').innerText = categories.length;
+      document.getElementById('stat-prompts').innerText = prompts.length;
+    }
+
+    // অ্যাডমিন ক্যাটাগরি তালিকা রেন্ডার
+    function renderAdminCategories() {
+      const tbody = document.getElementById('admin-categories-table');
+      let html = '';
+      categories.forEach(c => {
+        html += `
+          <tr class="border-b border-gray-800/50 hover:bg-[#1a202c]/50">
+            <td class="p-4 font-medium">${c.name}</td>
+            <td class="p-4 text-right">
+              <button onclick="deleteCat('${c.id}')" class="px-3 py-1.5 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded-lg text-xs font-semibold">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+
+    // ক্যাটাগরি সিলেক্ট ড্রপডাউন পপুলেট করা
+    function populateAdminCategoryDropdown() {
+      const select = document.getElementById('prompt-cat-select');
+      let html = '<option value="">ক্যাটাগরি সিলেক্ট করুন...</option>';
+      categories.forEach(c => {
+        html += `<option value="${c.name}">${c.name}</option>`;
+      });
+      select.innerHTML = html;
+    }
+
+    // অ্যাডমিন প্রম্পট তালিকা রেন্ডার
+    function renderAdminPrompts() {
+      const container = document.getElementById('admin-prompts-list');
+      let html = '';
+      prompts.forEach(p => {
+        html += `
+          <div class="bg-[#161b22] border border-gray-800 rounded-2xl overflow-hidden p-3 flex flex-col justify-between">
+            <div>
+              <img src="${p.img}" alt="" class="w-full h-32 object-cover rounded-xl mb-3" loading="lazy">
+              <p class="text-xs text-blue-500 font-bold mb-1">${p.category}</p>
+              <p class="text-xs text-gray-300 line-clamp-2 mb-3">${p.promptText}</p>
+            </div>
+            <button onclick="deletePr('${p.id}')" class="w-full py-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded-xl text-xs font-semibold">Delete Prompt</button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    // ক্যাটাগরি অ্যাড (অ্যাডমিন)
+    document.getElementById('add-cat-btn').addEventListener('click', async () => {
+      const name = document.getElementById('new-cat-input').value;
+      if (!name.trim()) return;
+      await addDoc(collection(db, "categories"), { name });
+      document.getElementById('new-cat-input').value = '';
+      alert("ক্যাটাগরি যুক্ত করা হয়েছে!");
+    });
+
+    // ক্যাটাগরি ডিলিট
+    window.deleteCat = async function(id) {
+      if (confirm("আপনি কি নিশ্চিতভাবে এই ক্যাটাগরি ডিলিট করতে চান?")) {
+        await deleteDoc(doc(db, "categories", id));
+      }
+    };
+
+    // প্রম্পট অ্যাড (অ্যাডমিন)
+    document.getElementById('add-prompt-btn').addEventListener('click', async () => {
+      const img = document.getElementById('prompt-img-input').value;
+      const cat = document.getElementById('prompt-cat-select').value;
+      const text = document.getElementById('prompt-text-input').value;
+
+      if (!img || !cat || !text) {
+        alert("সবগুলো ফিল্ড পূরণ করুন!");
+        return;
+      }
+
+      await addDoc(collection(db, "prompts"), {
+        img,
+        category: cat,
+        promptText: text,
+        timestamp: new Date().getTime()
+      });
+
+      document.getElementById('prompt-img-input').value = '';
+      document.getElementById('prompt-text-input').value = '';
+      alert("প্রম্পট যুক্ত করা হয়েছে!");
+    });
+
+    // প্রম্পট ডিলিট
+    window.deletePr = async function(id) {
+      if (confirm("আপনি কি এই প্রম্পটটি ডিলিট করতে চান?")) {
+        await deleteDoc(doc(db, "prompts", id));
+      }
+    };
+
+    // বিজ্ঞাপন সেটিংস সেভ
+    document.getElementById('save-ads-btn').addEventListener('click', async () => {
+      const adsgram = document.getElementById('adsgram-id-input').value;
+      const monetag = document.getElementById('monetag-id-input').value;
+
+      await setDoc(doc(db, "config", "settings"), {
+        ...configSettings,
+        adsgramBlockId: adsgram,
+        monetagTagId: monetag
+      });
+      alert("বিজ্ঞাপন সেটিংস সেভ করা হয়েছে!");
+    });
+
+    // গ্লোবাল সেটিংস সেভ
+    document.getElementById('save-settings-btn').addEventListener('click', async () => {
+      const name = document.getElementById('set-appname').value;
+      const wel = document.getElementById('set-welcometext').value;
+      const tel = document.getElementById('set-telegram').value;
+      const con = document.getElementById('set-contact').value;
+      const pass = document.getElementById('set-password').value;
+
+      await setDoc(doc(db, "config", "settings"), {
+        ...configSettings,
+        appName: name,
+        welcomeText: wel,
+        telegramLink: tel,
+        contactLink: con,
+        adminPassword: pass
+      });
+      alert("গ্লোবাল সেটিংস সেভ করা হয়েছে!");
+    });
+
+    // অ্যাডমিন লগআউট
+    window.logoutAdmin = function() {
+      window.location.hash = '';
+    };
+
+    // ডাইনামিক ডাটা সিঙ্ক ইনিশিয়ালাইজেশন
+    initDataSync();
+    
+    // উইন্ডো অবজেক্টে গ্লোবাল ফাংশনগুলো এক্সপোর্ট করা (যাতে inline HTML onClick থেকে কাজ করে)
+    window.switchTab = switchTab;
+    window.filterCategory = filterCategory;
+    window.switchAdminTab = switchAdminTab;
+    window.logoutAdmin = logoutAdmin;
+
+  </script>
 </body>
 </html>
