@@ -56,14 +56,8 @@
       background-color: #ffffff !important;
       border-color: #e5e5ea !important;
     }
-    .light-theme .app-modal {
-      background-color: #ffffff !important;
-      color: #1c1c1e !important;
-      border-color: #e5e5ea !important;
-    }
   </style>
 </head>
-<!-- sm:flex, sm:items-center, sm:justify-center দিয়ে শুধুমাত্র বড় স্ক্রিনে সেন্টার করা হয়েছে, মোবাইলে নয় -->
 <body class="bg-[#121212] text-white font-sans min-h-screen sm:flex sm:items-center sm:justify-center sm:py-8 transition-colors duration-300">
 
   <!-- ==================================================== -->
@@ -105,8 +99,8 @@
     </div>
 
     <!-- Main Content Area -->
-    <main class="flex-1 p-4">
-      <!-- Dynamic Page Title (For Daily and Favorite Tabs) -->
+    <main class="flex-1 p-4 w-full max-w-full">
+      <!-- Dynamic Page Title (For Daily, Favorite, and History Tabs) -->
       <div id="page-title-section" class="hidden mb-6">
         <h2 id="page-main-title" class="text-2xl font-bold">Daily Updates</h2>
         <p id="page-sub-title" class="text-xs text-gray-400">8 Daily Prompts</p>
@@ -118,7 +112,7 @@
       </div>
 
       <!-- Settings Screen (Tab 4) -->
-      <div id="user-settings-screen" class="hidden flex flex-col">
+      <div id="user-settings-screen" class="hidden flex flex-col w-full px-1">
         <!-- App Header with Compass Logo -->
         <div class="flex flex-col items-center py-6">
           <div class="w-16 h-16 rounded-full bg-[#002b5c] flex items-center justify-center text-[#0a84ff] mb-3 shadow-lg">
@@ -131,8 +125,9 @@
 
         <!-- App Actions -->
         <p class="text-xs text-gray-500 uppercase font-bold mb-2 tracking-wider">App Actions</p>
-        <div class="bg-[#1c1c1e] bg-menu-box rounded-[24px] overflow-hidden mb-6 border border-gray-800/40">
-          <div class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
+        <div class="bg-[#1c1c1e] bg-menu-box rounded-[24px] overflow-hidden mb-6 border border-gray-800/40 w-full">
+          <!-- History Button (Now switchTab to 'history') -->
+          <div onclick="switchTab('history')" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2 rounded-xl bg-blue-500/10 text-blue-500">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -141,6 +136,7 @@
             </div>
             <span class="text-gray-600 text-xs">➔</span>
           </div>
+          <!-- Follow Me Link (Dynamic) -->
           <a id="follow-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-pink-500/10 text-pink-500">
@@ -150,24 +146,26 @@
             </div>
             <span class="text-gray-600 text-xs">➔</span>
           </a>
-          <div class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
+          <!-- How to Use Link (Dynamic) -->
+          <a id="how-to-use-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
-              <span class="p-2.5 rounded-xl bg-teal-500/10 text-teal-500">
+              <span class="p-2 rounded-xl bg-teal-500/10 text-teal-500">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
               </span>
               <span class="text-sm font-semibold">How to use?</span>
             </div>
             <span class="text-gray-600 text-xs">➔</span>
-          </div>
-          <div class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
+          </a>
+          <!-- Share App Link (Dynamic) -->
+          <a id="share-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
-              <span class="p-2.5 rounded-xl bg-orange-500/10 text-orange-500">
+              <span class="p-2 rounded-xl bg-orange-500/10 text-orange-500">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="15.49"/><line x1="15.41" x2="8.59" y1="8.51" y2="10.49"/></svg>
               </span>
               <span class="text-sm font-semibold">Share The app</span>
             </div>
             <span class="text-gray-600 text-xs">➔</span>
-          </div>
+          </a>
           <!-- Theme Toggle Option -->
           <div onclick="toggleTheme()" class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
@@ -184,8 +182,9 @@
         </div>
 
         <p class="text-xs text-gray-500 uppercase font-bold mb-2 tracking-wider">Legal & Info</p>
-        <div class="bg-[#1c1c1e] bg-menu-box rounded-[24px] overflow-hidden border border-gray-800/40">
-          <div onclick="openPrivacyModal()" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
+        <div class="bg-[#1c1c1e] bg-menu-box rounded-[24px] overflow-hidden border border-gray-800/40 w-full mb-4">
+          <!-- Privacy Policy (Direct Dynamic Link) -->
+          <a id="privacy-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-500">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -193,11 +192,12 @@
               <span class="text-sm font-semibold">Privacy Policy</span>
             </div>
             <span class="text-gray-600 text-xs">➔</span>
-          </div>
+          </a>
+          <!-- Contact Us Link (Dynamic Support Link) -->
           <a id="support-link" href="#" target="_blank" class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-red-500/10 text-red-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               </span>
               <span class="text-sm font-semibold">Contact Us</span>
             </div>
@@ -279,28 +279,7 @@
   </div>
 
   <!-- ==================================================== -->
-  <!-- 3. Privacy Policy Modal -->
-  <!-- ==================================================== -->
-  <div id="privacy-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-[#1c1c1e] app-modal border border-gray-800 w-full max-w-sm rounded-[28px] p-6 text-left shadow-2xl transition-all duration-300">
-      <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
-        <span class="p-1.5 rounded-lg bg-yellow-500/10 text-yellow-500">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </span>
-        Privacy Policy
-      </h3>
-      <div class="text-xs text-gray-400 max-h-60 overflow-y-auto mb-6 leading-relaxed space-y-3 pr-1">
-        <p>Your privacy and data security are highly important to us.</p>
-        <p><strong>1. No Personal Data Collection:</strong> This application does not collect or store any of your personal data. Your favorite prompts are stored locally inside your device browser's storage [৩].</p>
-        <p><strong>2. Third-Party Ads (Monetag & Adsgram):</strong> We utilize Monetag and Adsgram.io to sustain our application [৩]. They may deliver anonymous and secure advertisements based on your browsing preferences [৩].</p>
-        <p><strong>3. Data Transmission:</strong> All dynamic application data is transmitted securely to and from our Firebase database using encrypted HTTPS connections [৩].</p>
-      </div>
-      <button onclick="closePrivacyModal()" class="w-full py-3 bg-[#0066cc] hover:bg-blue-600 text-white font-semibold rounded-xl text-sm transition-all shadow-lg shadow-blue-500/10">Close</button>
-    </div>
-  </div>
-
-  <!-- ==================================================== -->
-  <!-- 4. Firebase and Application Logic Script -->
+  <!-- 3. Firebase and Application Logic Script -->
   <!-- ==================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -326,14 +305,19 @@
     let categories = [];
     let prompts = [];
     let favorites = JSON.parse(localStorage.getItem('fav_prompts')) || [];
+    let historyList = JSON.parse(localStorage.getItem('history_prompts')) || []; // User generated history
     let activePrompt = null;
     let isDarkMode = true;
     let isSearchActive = false;
+    
+    // Dynamic settings loaded from Firebase
     let configSettings = {
       appName: 'Prompt House',
       welcomeText: 'Welcome App',
       telegramLink: '#',
       contactLink: '#',
+      howToUseLink: '#',
+      privacyLink: '#',
       adsgramBlockId: '',
       monetagTagId: ''
     };
@@ -362,9 +346,16 @@
     function applySettings() {
       document.getElementById('app-title').innerText = configSettings.appName;
       document.getElementById('app-subtitle').innerText = configSettings.welcomeText;
+      
+      // Setting dynamic links from Firebase Settings
       document.getElementById('follow-link').href = configSettings.telegramLink;
-      document.getElementById('support-link').href = configSettings.contactLink;
       document.getElementById('follow-link-preview').href = configSettings.telegramLink;
+      document.getElementById('how-to-use-link').href = configSettings.howToUseLink;
+      document.getElementById('privacy-link').href = configSettings.privacyLink;
+      document.getElementById('support-link').href = configSettings.contactLink;
+
+      // Automatically configuring Telegram sharing using current URL if not specified
+      document.getElementById('share-link').href = configSettings.shareAppLink || ('https://t.me/share/url?url=' + encodeURIComponent(window.location.href));
 
       injectMonetag(configSettings.monetagTagId);
     }
@@ -418,6 +409,10 @@
         filtered = prompts.slice(0, 8);
       } else if (currentTab === 'favorite') {
         filtered = prompts.filter(p => favorites.includes(p.id));
+      } else if (currentTab === 'history') {
+        // Filter history list and sort by execution order (most recent first)
+        filtered = prompts.filter(p => historyList.includes(p.id));
+        filtered.sort((a, b) => historyList.indexOf(a.id) - historyList.indexOf(b.id));
       } else {
         if (selectedCategory !== 'Home') {
           filtered = prompts.filter(p => p.category === selectedCategory);
@@ -562,6 +557,24 @@
         document.getElementById('page-main-title').innerText = "Favorite Prompts";
         document.getElementById('page-sub-title').innerText = `${favorites.length} Favorite Prompts`;
         renderPrompts();
+      } else if (tab === 'history') {
+        header.classList.add('hidden');
+        chips.classList.add('hidden');
+        grid.classList.remove('hidden');
+        settingsScreen.classList.add('hidden');
+        
+        pageTitleSection.classList.remove('hidden');
+        // Elegant inline back arrow for History page
+        document.getElementById('page-main-title').innerHTML = `
+          <div class="flex items-center gap-2">
+            <button onclick="switchTab('menu')" class="text-gray-400 hover:text-white mr-1 transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            History List
+          </div>
+        `;
+        document.getElementById('page-sub-title').innerText = `${historyList.length} Generated Prompts`;
+        renderPrompts();
       } else if (tab === 'menu') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -662,6 +675,12 @@
       
       document.getElementById('generate-btn').classList.add('hidden');
       document.getElementById('prompt-box-container').classList.remove('hidden');
+
+      // Add dynamic prompt generated history on success
+      if (activePrompt && !historyList.includes(activePrompt.id)) {
+        historyList.unshift(activePrompt.id); // Pushing new ones to the top
+        localStorage.setItem('history_prompts', JSON.stringify(historyList));
+      }
     });
 
     // Copy action handler
