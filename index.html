@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Prompt Bot</title>
+    <!-- Tailwind CSS (ডিজাইনের জন্য) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & Babel (কোড রান করার জন্য) -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-[#0d0f12] text-white antialiased selection:bg-blue-500/30">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // গ্লোবাল সেটিংস এবং ডেটা
+        const globalSettings = {
+            appName: "AI Prompt Craft",
+            telegramLink: "https://t.me/yourchannel", 
+            contactLink: "https://t.me/yourusername"
+        };
+
+        const samplePrompts = [
+            { id: 1, category: "Cinematic", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500", promptText: "Hyper-realistic 8K cinematic portrait of a cyber influencer, luxury neon lighting, high-fashion aesthetic." },
+            { id: 2, category: "Luxury", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500", promptText: "Ultra-modern luxury penthouse interior, glassmorphism design, cash stacks on marble table, 8K resolution." }
+        ];
+
+        function App() {
+            const [activeTab, setActiveTab] = React.useState('home');
+            const [selectedPrompt, setSelectedPrompt] = React.useState(null);
+            const [isPromptGenerated, setIsPromptGenerated] = React.useState(false);
+            const [copied, setCopied] = React.useState(false);
+            const [favorites, setFavorites] = React.useState([]);
+
+            const toggleFavorite = (id, e) => {
+                e.stopPropagation();
+                if (favorites.includes(id)) {
+                    setFavorites(favorites.filter(favId => favId !== id));
+                } else {
+                    setFavorites([...favorites, id]);
+                }
+            };
+
+            const handlePromptSelect = (prompt) => {
+                setSelectedPrompt(prompt);
+                setIsPromptGenerated(false);
+                setCopied(false);
+            };
+
+            const handleGeneratePrompt = () => {
+                // এখানে আপনার Adsgram অ্যাড কোড ট্রিগার করতে পারেন
+                alert("Loading Ad... After ad, prompt will unlock!");
+                setIsPromptGenerated(true);
+            };
+
+            const handleCopy = (text) => {
+                navigator.clipboard.writeText(text);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            const favoriteItems = samplePrompts.filter(item => favorites.includes(item.id));
+
+            return (
+                <div className="min-h-screen bg-[#0d0f12] text-gray-100 flex justify-center items-start p-0 sm:p-4">
+                    <div className="w-full max-w-md bg-[#121212] min-h-screen sm:min-h-[840px] sm:rounded-3xl shadow-2xl overflow-hidden border border-gray-800/50 relative flex flex-col pb-16">
+                        
+                        {!selectedPrompt ? (
+                            <>
+                                {/* হেডার বার */}
+                                <header className="p-4 bg-[#121212]/80 backdrop-blur-md border-b border-gray-800/60 sticky top-0 z-10 flex items-center justify-between">
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">🚀</div>
+                                        <h1 className="text-base font-bold tracking-tight text-white">{globalSettings.appName}</h1>
+                                    </div>
+                                    <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                                </header>
+
+                                {/* মেইন কন্টেন্ট বডি */}
+                                <main className="flex-1 p-4 overflow-y-auto">
+                                    {/* ১. হোম ট্যাব */}
+                                    {activeTab === 'home' && (
+                                        <div className="space-y-5 animate-fadeIn">
+                                            <div className="grid grid-cols-2 gap-3.5">
+                                                {samplePrompts.map((item) => (
+                                                    <div 
+                                                        key={item.id} 
+                                                        onClick={() => handlePromptSelect(item)}
+                                                        className="group bg-[#161b22] border border-gray-800/80 rounded-2xl overflow-hidden cursor-pointer hover:border-gray-700 transition-all flex flex-col"
+                                                    >
+                                                        <div className="w-full aspect-[3/4] relative overflow-hidden bg-[#0d0f12]">
+                                                            <img src={item.img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                                            <button 
+                                                                onClick={(e) => toggleFavorite(item.id, e)}
+                                                                className="absolute top-2.5 right-2.5 p-2 rounded-xl bg-black/40 backdrop-blur-md text-gray-300 hover:text-white transition-colors"
+                                                            >
+                                                                <svg className={`w-4 h-4 ${favorites.includes(item.id) ? 'fill-red-500 text-red-500' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                        <div className="p-3 flex-1 flex flex-col justify-between gap-2">
+                                                            <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">{item.category}</span>
+                                                            <p className="text-xs text-gray-300 line-clamp-2 font-medium leading-relaxed">{item.promptText}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* ২. ডেইলি ট্যাব */}
+                                    {activeTab === 'daily' && (
+                                        <div className="space-y-4 animate-fadeIn text-center py-10">
+                                            <span className="text-4xl">⚡</span>
+                                            <h2 className="text-lg font-bold">Daily Hot Prompts</h2>
+                                            <p className="text-xs text-gray-400 max-w-xs mx-auto">প্রতিদিন নতুন নতুন ট্রেন্ডিং এআই প্রম্পট পেতে এই ট্যাবটি লক্ষ্য রাখুন।</p>
+                                        </div>
+                                    )}
+
+                                    {/* ৩. ফেভারিট ট্যাব */}
+                                    {activeTab === 'favorite' && (
+                                        <div className="space-y-4 animate-fadeIn">
+                                            <h2 className="text-lg font-bold">Your Bookmarks ({favoriteItems.length})</h2>
+                                            {favoriteItems.length === 0 ? (
+                                                <div className="text-center py-12 text-gray-500 text-xs">কোনো প্রম্পট ফেভারিট করা হয়নি।</div>
+                                            ) : (
+                                                <div className="grid grid-cols-2 gap-3.5">
+                                                    {favoriteItems.map((item) => (
+                                                        <div 
+                                                            key={item.id}
+                                                            onClick={() => handlePromptSelect(item)}
+                                                            className="relative rounded-2xl overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] cursor-pointer hover:scale-[1.02] transition-transform"
+                                                        >
+                                                            <img src={item.img} alt="" className="w-full h-full object-cover" />
+                                                            <button 
+                                                                onClick={(e) => toggleFavorite(item.id, e)} 
+                                                                className="absolute top-3 right-3 p-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white"
+                                                            >
+                                                                <svg className="w-5 h-5 fill-red-500 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* ৪. মেনু ট্যাব */}
+                                    {activeTab === 'menu' && (
+                                        <div className="space-y-4 animate-fadeIn">
+                                            <h2 className="text-lg font-bold">Menu & Support</h2>
+                                            <div className="bg-[#161b22] border border-gray-800 rounded-2xl p-4 space-y-3">
+                                                <a href={globalSettings.telegramLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3.5 bg-[#0d0f12] hover:bg-gray-800 rounded-xl transition-all">
+                                                    <span className="text-sm font-medium">Join Telegram Channel</span>
+                                                    <span className="text-gray-500 text-xs">➔</span>
+                                                </a>
+                                                <a href={globalSettings.contactLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3.5 bg-[#0d0f12] hover:bg-gray-800 rounded-xl transition-all">
+                                                    <span className="text-sm font-medium">Contact Support</span>
+                                                    <span className="text-gray-500 text-xs">➔</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    )}
+                                </main>
+
+                                {/* বটম নেভিগেশন বার */}
+                                <nav className="absolute bottom-0 left-0 right-0 h-16 bg-[#121212]/90 backdrop-blur-md border-t border-gray-800/80 flex justify-around items-center z-20">
+                                    <button onClick={() => setActiveTab('home')} className={`flex flex-col items-center gap-1 text-[11px] font-semibold ${activeTab === 'home' ? 'text-blue-500' : 'text-gray-500'}`}>
+                                        <span>🏠</span><span>Home</span>
+                                    </button>
+                                    <button onClick={() => setActiveTab('daily')} className={`flex flex-col items-center gap-1 text-[11px] font-semibold ${activeTab === 'daily' ? 'text-blue-500' : 'text-gray-500'}`}>
+                                        <span>⚡</span><span>Daily</span>
+                                    </button>
+                                    <button onClick={() => setActiveTab('favorite')} className={`flex flex-col items-center gap-1 text-[11px] font-semibold ${activeTab === 'favorite' ? 'text-blue-500' : 'text-gray-500'}`}>
+                                        <span>❤️</span><span>Favorite</span>
+                                    </button>
+                                    <button onClick={() => setActiveTab('menu')} className={`flex flex-col items-center gap-1 text-[11px] font-semibold ${activeTab === 'menu' ? 'text-blue-500' : 'text-gray-500'}`}>
+                                        <span>⚙️</span><span>Menu</span>
+                                    </button>
+                                </nav>
+                            </>
+                        ) : (
+                            /* প্রম্পট ডিটেইলস স্ক্রিন */
+                            <div className="flex flex-col min-h-screen pb-6 animate-fadeIn">
+                                <header className="p-4 flex items-center justify-between bg-[#121212] border-b border-gray-800/50">
+                                    <button onClick={() => setSelectedPrompt(null)} className="text-sm font-semibold text-gray-400 hover:text-white flex items-center gap-1">
+                                        <span>◀</span> Back
+                                    </button>
+                                    <span className="text-[10px] px-2.5 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full font-bold uppercase">{selectedPrompt.category}</span>
+                                </header>
+
+                                <div className="flex-1 p-4 space-y-5 overflow-y-auto">
+                                    <div className="w-full aspect-[3/4] rounded-2xl overflow-hidden border border-gray-800 bg-[#161b22]">
+                                        <img src={selectedPrompt.img} alt="" className="w-full h-full object-cover" />
+                                    </div>
+
+                                    <div className="bg-[#161b22] border border-gray-800 rounded-2xl p-4 min-h-[120px] flex flex-col justify-between relative overflow-hidden">
+                                        {!isPromptGenerated && (
+                                            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex flex-col items-center justify-center p-4 text-center z-10">
+                                                <span className="text-xl mb-1">🔒</span>
+                                                <p className="text-xs font-bold text-gray-200">Prompt Text is Locked</p>
+                                            </div>
+                                        )}
+                                        <div className={`text-xs leading-relaxed text-gray-300 ${!isPromptGenerated ? 'opacity-5 select-none' : ''}`}>
+                                            {selectedPrompt.promptText}
+                                        </div>
+                                        {isPromptGenerated && (
+                                            <button onClick={() => handleCopy(selectedPrompt.promptText)} className="mt-4 w-full py-2 bg-blue-600 rounded-xl text-xs font-bold text-white">
+                                                {copied ? '✓ Copied!' : '📋 Copy Prompt'}
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {!isPromptGenerated && (
+                                        <button onClick={handleGeneratePrompt} className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-xs tracking-wide">
+                                            🚀 Unlock & Generate Prompt
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
