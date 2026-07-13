@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Prompt House</title>
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -80,7 +82,7 @@
         </div>
       </div>
 
-      <!-- Inline Search Input -->
+      <!-- Inline Search Input (Fills the space without layout shifts) -->
       <div id="header-search-content" class="hidden flex-1 mr-3 animate-fadeIn">
         <input id="search-input" type="text" placeholder="Search prompts..." class="w-full p-2.5 bg-[#1c1c1e] border border-gray-800 rounded-xl outline-none text-sm focus:border-blue-500 app-card">
       </div>
@@ -92,6 +94,11 @@
         </svg>
       </button>
     </header>
+
+    <!-- Dynamic Announcement Banner -->
+    <div id="announcement-banner" class="hidden bg-yellow-500/20 border-b border-yellow-500/30 text-yellow-500 text-xs py-2.5 px-4 overflow-hidden relative shrink-0">
+      <marquee id="banner-marquee-text" scrollamount="4" class="font-semibold"></marquee>
+    </div>
 
     <!-- Category Chips (Horizontal Scroll) -->
     <div id="category-chips-container" class="flex gap-2 overflow-x-auto px-4 py-2 no-scrollbar scroll-smooth">
@@ -136,7 +143,7 @@
             </div>
             <span class="text-gray-600 text-xs">➔</span>
           </div>
-          <!-- Follow Me Link (Dynamic) -->
+          <!-- Follow Me Link -->
           <a id="follow-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-pink-500/10 text-pink-500">
@@ -146,7 +153,7 @@
             </div>
             <span class="text-gray-600 text-xs">➔</span>
           </a>
-          <!-- How to Use Link (Dynamic) -->
+          <!-- How to Use Link -->
           <a id="how-to-use-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2 rounded-xl bg-teal-500/10 text-teal-500">
@@ -156,7 +163,7 @@
             </div>
             <span class="text-gray-600 text-xs">➔</span>
           </a>
-          <!-- Share App Link (Dynamic) -->
+          <!-- Share App Link -->
           <a id="share-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2 rounded-xl bg-orange-500/10 text-orange-500">
@@ -183,7 +190,7 @@
 
         <p class="text-xs text-gray-500 uppercase font-bold mb-2 tracking-wider">Legal & Info</p>
         <div class="bg-[#1c1c1e] bg-menu-box rounded-[24px] overflow-hidden border border-gray-800/40 w-full mb-4">
-          <!-- Privacy Policy (Direct Dynamic Link) -->
+          <!-- Privacy Policy -->
           <a id="privacy-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-500">
@@ -279,34 +286,24 @@
   </div>
 
   <!-- ==================================================== -->
-  <!-- 3. Privacy Policy Modal -->
+  <!-- 3. Dynamic Maintenance Mode Overlay -->
   <!-- ==================================================== -->
-  <div id="privacy-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-[#1c1c1e] app-modal border border-gray-800 w-full max-w-sm rounded-[28px] p-6 text-left shadow-2xl transition-all duration-300">
-      <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
-        <span class="p-1.5 rounded-lg bg-yellow-500/10 text-yellow-500">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </span>
-        Privacy Policy
-      </h3>
-      <div class="text-xs text-gray-400 max-h-60 overflow-y-auto mb-6 leading-relaxed space-y-3 pr-1">
-        <p>Your privacy and data security are highly important to us.</p>
-        <p><strong>1. No Personal Data Collection:</strong> This application does not collect or store any of your personal data. Your favorite prompts are stored locally inside your device browser's storage [৩].</p>
-        <p><strong>2. Third-Party Ads (Monetag & Adsgram):</strong> We utilize Monetag and Adsgram.io to sustain our application [৩]. They may deliver anonymous and secure advertisements based on your browsing preferences [৩].</p>
-        <p><strong>3. Data Transmission:</strong> All dynamic application data is transmitted securely to and from our Firebase database using encrypted HTTPS connections [৩].</p>
-      </div>
-      <button onclick="closePrivacyModal()" class="w-full py-3 bg-[#0066cc] hover:bg-blue-600 text-white font-semibold rounded-xl text-sm transition-all shadow-lg shadow-blue-500/10">Close</button>
+  <div id="maintenance-screen" class="hidden fixed inset-0 bg-[#121212] z-[100] flex flex-col items-center justify-center p-6 text-center">
+    <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-3xl mb-6 shadow-lg shadow-red-500/5 animate-pulse">
+      <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
     </div>
+    <h2 class="text-2xl font-bold mb-2">Under Maintenance</h2>
+    <p class="text-sm text-gray-400 max-w-xs leading-relaxed">We are currently updating our database. Prompt House will be back online shortly. Thank you for your patience!</p>
   </div>
 
   <!-- ==================================================== -->
-  <!-- 4. Firebase and Application Logic Script -->
+  <!-- 5. Firebase and Application Logic Script -->
   <!-- ==================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Firebase configuration
+    // Firebase configuration (Your exact keys)
     const firebaseConfig = {
       apiKey: "AIzaSyBP9d5ekOd0zvO-D7Fq8aXmNoS2aqryvVA",
       authDomain: "tg-bot-prompt-copy.firebaseapp.com",
@@ -340,11 +337,19 @@
       howToUseLink: '#',
       privacyLink: '#',
       adsgramBlockId: '',
-      monetagTagId: ''
+      monetagTagId: '',
+      adsgramEnabled: true,
+      monetagEnabled: true,
+      maintenanceMode: false,
+      bannerEnabled: false,
+      bannerText: ''
     };
 
     // Real-time Database sync
     function initDataSync() {
+      // Sync Telegram User to Firestore automatically (Zero-Backend feature!)
+      syncTelegramUser();
+
       onSnapshot(collection(db, "categories"), (snapshot) => {
         categories = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         renderCategoryChips();
@@ -353,7 +358,6 @@
       onSnapshot(collection(db, "prompts"), (snapshot) => {
         prompts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         renderPrompts();
-        // রিয়েল-টাইমে প্রম্পট পরিবর্তন হলে স্ক্রিন রেন্ডারিং এর কাউন্টার আপডেট হবে
         if (currentTab === 'daily' || currentTab === 'favorite' || currentTab === 'history') {
           switchTab(currentTab);
         }
@@ -365,6 +369,27 @@
           applySettings();
         }
       });
+    }
+
+    // Dynamic Telegram user details collection from the Telegram client
+    async function syncTelegramUser() {
+      const tg = window.Telegram?.WebApp;
+      if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        const tgUser = tg.initDataUnsafe.user;
+        const userRef = doc(db, "users", tgUser.id.toString());
+        try {
+          await setDoc(userRef, {
+            id: tgUser.id,
+            first_name: tgUser.first_name || "",
+            last_name: tgUser.last_name || "",
+            username: tgUser.username || "",
+            joined_at: new Date().getTime()
+          }, { merge: true });
+          console.log("Telegram user synced to database successfully.");
+        } catch (e) {
+          console.error("Error saving user:", e);
+        }
+      }
     }
 
     // Apply configurations dynamically
@@ -382,7 +407,31 @@
       // Automatically configuring Telegram sharing using current URL if not specified
       document.getElementById('share-link').href = configSettings.shareAppLink || ('https://t.me/share/url?url=' + encodeURIComponent(window.location.href));
 
-      injectMonetag(configSettings.monetagTagId);
+      // PRO: Maintenance Mode Integration
+      const maintenanceScreen = document.getElementById('maintenance-screen');
+      if (configSettings.maintenanceMode) {
+        maintenanceScreen.classList.remove('hidden');
+      } else {
+        maintenanceScreen.classList.add('hidden');
+      }
+
+      // PRO: Announcement Banner Integration
+      const banner = document.getElementById('announcement-banner');
+      const marquee = document.getElementById('banner-marquee-text');
+      if (configSettings.bannerEnabled && configSettings.bannerText) {
+        banner.classList.remove('hidden');
+        marquee.innerText = configSettings.bannerText;
+      } else {
+        banner.classList.add('hidden');
+      }
+
+      // PRO: Monetag Ad Toggle Integration
+      if (configSettings.monetagEnabled) {
+        injectMonetag(configSettings.monetagTagId);
+      } else {
+        const exist = document.getElementById('monetag-tag-script');
+        if (exist) exist.remove();
+      }
     }
 
     // Inject Monetag script tag
@@ -400,7 +449,8 @@
     // Load and execute Adsgram.io Ad
     function showAdsgramAd() {
       return new Promise((resolve) => {
-        if (window.Adsgram && configSettings.adsgramBlockId) {
+        // PRO: Adsgram Ad Toggle Integration
+        if (configSettings.adsgramEnabled && window.Adsgram && configSettings.adsgramBlockId) {
           const AdController = window.Adsgram.init({ blockId: configSettings.adsgramBlockId });
           AdController.show()
             .then(() => resolve(true))
@@ -409,7 +459,7 @@
               resolve(true);
             });
         } else {
-          resolve(true);
+          resolve(true); // Bypass ad gracefully if disabled
         }
       });
     }
