@@ -614,6 +614,9 @@
       input.value = '';
       document.getElementById('search-btn-icon').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>`;
 
+      // বটের ভেতর সঠিক ব্যাক নেভিগেশন মেইনটেইন করার লজিক
+      const tg = window.Telegram?.WebApp;
+
       if (tab === 'daily') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -625,6 +628,8 @@
         // রিয়েল-টাইমে মোট প্রম্পট সংখ্যা ক্যালকুলেট করে সাবটাইটেলে রেন্ডার করা
         document.getElementById('page-sub-title').innerText = `${prompts.length} Daily Prompts`;
         renderPrompts();
+
+        if (tg && tg.BackButton) tg.BackButton.show(); // ব্যাক বাটন শো করবে [১.১.২]
       } else if (tab === 'favorite') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -635,6 +640,8 @@
         document.getElementById('page-main-title').innerText = "Favorite Prompts";
         document.getElementById('page-sub-title').innerText = `${favorites.length} Favorite Prompts`;
         renderPrompts();
+
+        if (tg && tg.BackButton) tg.BackButton.show(); // ব্যাক বাটন শো করবে [১.১.২]
       } else if (tab === 'history') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -653,19 +660,26 @@
         `;
         document.getElementById('page-sub-title').innerText = `${historyList.length} Generated Prompts`;
         renderPrompts();
+
+        if (tg && tg.BackButton) tg.BackButton.show(); // ব্যাক বাটন শো করবে [১.১.২]
       } else if (tab === 'menu') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
         grid.classList.add('hidden');
         pageTitleSection.classList.add('hidden');
         settingsScreen.classList.remove('hidden');
+
+        if (tg && tg.BackButton) tg.BackButton.show(); // ব্যাক বাটন শো করবে [১.১.২]
       } else {
+        // Home ট্যাব (এখানে টেলিগ্রামের ব্যাক বাটন হাইড থাকবে)
         header.classList.remove('hidden');
         chips.classList.remove('hidden');
         grid.classList.remove('hidden');
         pageTitleSection.classList.add('hidden');
         settingsScreen.classList.add('hidden');
         renderPrompts();
+
+        if (tg && tg.BackButton) tg.BackButton.hide(); // ব্যাক বাটন হাইড হবে [১.১.২]
       }
     };
 
@@ -716,6 +730,12 @@
       document.getElementById('prompt-box-container').classList.add('hidden');
 
       updatePreviewFavBtn();
+
+      // প্রিভিউতে গেলে টেলিগ্রাম ব্যাক বাটন শো করবে [১.১.২]
+      const tg = window.Telegram?.WebApp;
+      if (tg && tg.BackButton) {
+        tg.BackButton.show();
+      }
     };
 
     // Refresh heart button inside preview page
@@ -743,6 +763,12 @@
       document.getElementById('search-btn-icon').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>`;
       
       renderPrompts();
+
+      // হোম পেজে ফিরে আসলে টেলিগ্রাম ব্যাক বাটন হাইড হবে [১.১.২]
+      const tg = window.Telegram?.WebApp;
+      if (tg && tg.BackButton) {
+        tg.BackButton.hide();
+      }
     };
 
     // Generate prompt button execution
@@ -802,6 +828,18 @@
     window.closePrivacyModal = function() {
       document.getElementById('privacy-modal').classList.add('hidden');
     };
+
+    // টেলিগ্রামের অফিশিয়াল ব্যাক বাটন ক্লিক হ্যান্ডলার (টেলিগ্রামের ভেতর ব্যাক বাটন কন্ট্রোল করবে) [১, ১.১.২]
+    const tg = window.Telegram?.WebApp;
+    if (tg && tg.BackButton) {
+      tg.BackButton.onClick(() => {
+        if (activePrompt) {
+          closePreview(); // প্রিভিউ পেজে থাকলে হোমে ফিরবে
+        } else if (currentTab !== 'home') {
+          switchTab('home'); // অন্য ট্যাবে থাকলে হোমে ফিরবে
+        }
+      });
+    }
 
     // Initialize snapshot connections
     initDataSync();
