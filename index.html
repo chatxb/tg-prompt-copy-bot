@@ -58,12 +58,39 @@
       background-color: #ffffff !important;
       border-color: #e5e5ea !important;
     }
+
+    /* Splash Screen Loading Bar Animation */
+    @keyframes loadingBar {
+      0% { width: 0%; left: 0; }
+      50% { width: 100%; left: 0; }
+      100% { width: 0%; left: 100%; }
+    }
+    .animate-loadingBar {
+      animation: loadingBar 1.5s infinite ease-in-out;
+    }
   </style>
 </head>
 <body class="bg-[#121212] text-white font-sans min-h-screen sm:flex sm:items-center sm:justify-center sm:py-8 transition-colors duration-300">
 
   <!-- ==================================================== -->
-  <!-- 1. User Application View -->
+  <!-- ০. ডাইনামিক স্প্ল্যাশ স্ক্রিন (Splash Screen Overlay) -->
+  <!-- ==================================================== -->
+  <div id="splash-screen" class="fixed inset-0 bg-[#121212] z-[120] flex flex-col items-center justify-center p-6 text-center transition-opacity duration-500">
+    <div class="w-16 h-16 rounded-full bg-[#002b5c] flex items-center justify-center text-[#0a84ff] mb-6 shadow-lg shadow-blue-500/10 animate-bounce">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+      </svg>
+    </div>
+    <h2 id="splash-app-title" class="text-2xl font-bold tracking-wide mb-1">Prompt House</h2>
+    <p id="splash-welcome-text" class="text-xs text-gray-400 mb-8">Welcome App</p>
+    <!-- প্রোগ্রেস বার লুপ -->
+    <div class="w-32 h-1 bg-gray-800 rounded-full overflow-hidden relative">
+      <div class="absolute top-0 left-0 h-full bg-[#0066cc] rounded-full animate-loadingBar"></div>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- ১. ইউজার অ্যাপ ভিউ (User App View) -->
   <!-- ==================================================== -->
   <div id="user-view" class="w-full sm:max-w-md sm:rounded-[36px] sm:border sm:border-gray-800/80 overflow-hidden flex flex-col relative pb-28 select-none min-h-screen sm:min-h-[85vh] bg-[#121212] transition-all duration-300">
     
@@ -262,8 +289,8 @@
     <!-- ডাইনামিক Adsterra HTML Native Ad Container (Aspect Ratio 1:1) -->
     <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
       <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
-      <!-- w-full দিয়ে কন্টেইনার সাইজ চওড়া করা হয়েছে এবং উইজেট নিজের মতো রিয়েল-টাইমে সাইজ নেবে -->
-      <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden">
+      <!-- layout jumping বন্ধ করতে কন্টেইনারটির মক হাইট min-h-[260px] সেট করা হয়েছে -->
+      <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[260px]">
         <!-- Adsterra script will be injected here dynamically -->
       </div>
     </div>
@@ -338,6 +365,8 @@
     let activePrompt = null;
     let isDarkMode = true;
     let isSearchActive = false;
+    let categoriesLoaded = false;
+    let promptsLoaded = false;
     
     // Dynamic settings loaded from Firebase
     let configSettings = {
@@ -366,6 +395,8 @@
       onSnapshot(collection(db, "categories"), (snapshot) => {
         categories = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         renderCategoryChips();
+        categoriesLoaded = true;
+        checkSplashDismissal();
       });
 
       onSnapshot(collection(db, "prompts"), (snapshot) => {
@@ -374,6 +405,8 @@
         if (currentTab === 'daily' || currentTab === 'favorite' || currentTab === 'history') {
           switchTab(currentTab);
         }
+        promptsLoaded = true;
+        checkSplashDismissal();
       });
 
       onSnapshot(doc(db, "config", "settings"), (snapshot) => {
@@ -382,6 +415,19 @@
           applySettings();
         }
       });
+    }
+
+    // ডাইনামিক স্প্ল্যাশ স্ক্রিন রিমুভ করার ফাংশন
+    function checkSplashDismissal() {
+      if (categoriesLoaded && promptsLoaded) {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          splash.classList.add('opacity-0');
+          setTimeout(() => {
+            splash.classList.add('hidden');
+          }, 500); // 500ms smooth fadeout
+        }
+      }
     }
 
     // Dynamic Telegram user details collection from the Telegram client [১, ৩]
@@ -410,6 +456,10 @@
       document.getElementById('app-title').innerText = configSettings.appName;
       document.getElementById('app-subtitle').innerText = configSettings.welcomeText;
       
+      // স্প্ল্যাশ স্ক্রিনেও ব্র্যান্ডিং রিয়েল-টাইমে আপডেট হবে
+      document.getElementById('splash-app-title').innerText = configSettings.appName || 'Prompt House';
+      document.getElementById('splash-welcome-text').innerText = configSettings.welcomeText || 'Welcome App';
+
       // Setting dynamic links from Firebase Settings
       document.getElementById('follow-link').href = configSettings.telegramLink;
       document.getElementById('follow-link-preview').href = configSettings.telegramLink;
@@ -470,7 +520,7 @@
       document.body.appendChild(s);
     }
 
-    // Dynamic clean iframe generator to safely execute raw Adsterra script inside parent page directly [৩]
+    // Dynamic self-resizing iframe generator to smoothly execute Adsterra code (Upgraded with pre-allocated 260px height to prevent jumping) [৩]
     function injectAdsterraNative(htmlCode) {
       const slot = document.getElementById('native-ad-slot');
       if (!htmlCode || !slot) return;
@@ -478,10 +528,10 @@
       
       slot.innerHTML = ''; // Clear previous
       
-      // Adsterra-এর কোডটি তার আসল সাইজে স্ক্রিনে লোড করার জন্য কন্টেইনারটির প্রস্থ ১০০% রেখে হাইট ০ করা হয়েছে এবং পরবর্তীতে স্ক্রিপ্ট দিয়ে হাইট ডাইনামিক করা হচ্ছে [৩]
+      // কন্টেইনারের সাইজ ধপ করে চ্যাপ্টা হওয়া থেকে বাঁচাতে আইফ্রেমটির ইনিশিয়াল হাইট ২৬০ পিক্সেল করে দেওয়া হলো [৩]
       const iframe = document.createElement('iframe');
-      iframe.style.width = '100%'; 
-      iframe.style.height = '0px'; 
+      iframe.style.width = '260px'; 
+      iframe.style.height = '260px'; 
       iframe.style.border = 'none';
       iframe.style.overflow = 'hidden';
       iframe.setAttribute('scrolling', 'no');
@@ -498,7 +548,7 @@
           <style>
             body { margin: 0; padding: 0; background: transparent; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
             /* Adsterra-এর ভেতরের কন্টেইনার এবং আইফ্রেমগুলোকে ১০০% সাইজ নিতে সাহায্য করবে কিন্তু কোনো কনফ্লিক্ট করবে না */
-            body > div, body > iframe { width: 100% !important; border: none !important; margin: 0 !important; }
+            body > div, body > iframe { width: 100% !important; height: 100% !important; border: none !important; margin: 0 !important; }
             iframe, div { max-width: 100%; max-height: 100%; border: none !important; }
           </style>
         </head>
@@ -825,7 +875,7 @@
 
       updatePreviewFavBtn();
 
-      // Show back button on Telegram app header
+      // Show back button on Telegram app header [১.১.২]
       const tg = window.Telegram?.WebApp;
       if (tg && tg.BackButton) {
         tg.BackButton.show();
@@ -858,7 +908,7 @@
       
       renderPrompts();
 
-      // Hide back button on Telegram app header
+      // Hide back button on Telegram app header [১.১.২]
       const tg = window.Telegram?.WebApp;
       if (tg && tg.BackButton) {
         tg.BackButton.hide();
@@ -923,7 +973,7 @@
       document.getElementById('privacy-modal').classList.add('hidden');
     };
 
-    // Native Telegram Back Button click event receiver
+    // Native Telegram Back Button click event receiver [১, ১.১.২]
     const tg = window.Telegram?.WebApp;
     if (tg && tg.BackButton) {
       tg.BackButton.onClick(() => {
