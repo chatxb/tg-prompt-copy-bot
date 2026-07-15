@@ -236,7 +236,7 @@
       </button>
     </header>
 
-    <!-- প্রিভিউ ইমেজের পোর্ট্রেট রেশিও aspect-[3/4] ঠিক রেখে উচ্চতা সর্বোচ্চ h-[260px] সেট করা হয়েছে যাতে স্ক্রিন জুড়ে না থাকে -->
+    <!-- প্রিভিউ ইমেজের পোর্ট্রেট রেশিও aspect-[3/4] ঠিক রেখে উচ্চতা সর্বোচ্চ h-[260px] সেট করা হয়েছে -->
     <div class="rounded-[24px] overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] h-[260px] w-auto mx-auto mb-6 flex items-center justify-center">
       <img id="preview-img" src="" alt="" class="h-full w-auto object-cover">
     </div>
@@ -256,6 +256,14 @@
           <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
           <span id="copy-btn-text">Copy Prompt</span>
         </button>
+      </div>
+    </div>
+
+    <!-- ডাইনামিক এডস্টেরা ন্যাটিভ অ্যাড স্লট (অ্যাডমিন প্যানেল থেকে আইডি নিয়ে সচল হবে) -->
+    <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
+      <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
+      <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[90px]">
+        <!-- Adsterra script will be injected here dynamically -->
       </div>
     </div>
 
@@ -342,6 +350,8 @@
       monetagTagId: '',
       adsgramEnabled: true,
       monetagEnabled: true,
+      adsterraEnabled: true,
+      adsterraKey: '',
       maintenanceMode: false,
       bannerEnabled: false,
       bannerText: ''
@@ -373,7 +383,7 @@
       });
     }
 
-    // Dynamic Telegram user details collection from the Telegram client [১, ৩]
+    // Dynamic Telegram user details collection [১, ৩]
     async function syncTelegramUser() {
       const tg = window.Telegram?.WebApp;
       if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -387,7 +397,7 @@
             username: tgUser.username || "",
             joined_at: new Date().getTime()
           }, { merge: true });
-          console.log("Telegram user synced to database successfully.");
+          console.log("Telegram user synced successfully.");
         } catch (e) {
           console.error("Error saving user:", e);
         }
@@ -434,6 +444,16 @@
         const exist = document.getElementById('monetag-tag-script');
         if (exist) exist.remove();
       }
+
+      // PRO: Adsterra Native Ad Integration
+      const adsterraContainer = document.getElementById('native-ad-container');
+      if (configSettings.adsterraEnabled && configSettings.adsterraKey) {
+        adsterraContainer.classList.remove('hidden');
+        injectAdsterraNative(configSettings.adsterraKey);
+      } else {
+        adsterraContainer.classList.add('hidden');
+        document.getElementById('native-ad-slot').innerHTML = '';
+      }
     }
 
     // Inject Monetag script tag
@@ -446,6 +466,35 @@
       s.src = `https://growthofalphas.com/act/files/micro.tag.min.js?z=${tagId}`;
       s.async = true;
       document.body.appendChild(s);
+    }
+
+    // Inject Adsterra Native Banner script tags dynamically
+    function injectAdsterraNative(adKey) {
+      const slot = document.getElementById('native-ad-slot');
+      if (!adKey || !slot) return;
+      if (slot.getAttribute('data-loaded') === adKey) return; // Prevent multiple requests
+      
+      slot.innerHTML = ''; // Clear previous
+      
+      const scriptConfig = document.createElement('script');
+      scriptConfig.type = 'text/javascript';
+      scriptConfig.text = `
+        atOptions = {
+          'key' : '${adKey}',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 320,
+          'params' : {}
+        };
+      `;
+      
+      const scriptInvoke = document.createElement('script');
+      scriptInvoke.type = 'text/javascript';
+      scriptInvoke.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
+      
+      slot.appendChild(scriptConfig);
+      slot.appendChild(scriptInvoke);
+      slot.setAttribute('data-loaded', adKey);
     }
 
     // Load and execute Adsgram.io Ad
@@ -469,7 +518,6 @@
     // Render category horizontal chips (Enlarged design)
     function renderCategoryChips() {
       const container = document.getElementById('category-chips-container');
-      // চিপসের সাইজ text-sm এবং প্যাডিং px-5 py-2.5 দিয়ে কাস্টমাইজড করা হয়েছে
       let html = `<button onclick="filterCategory('Home')" class="px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${selectedCategory === 'Home' ? 'bg-[#0066cc] text-white shadow-lg shadow-blue-500/10' : 'bg-[#222222] text-gray-300'}">Home</button>`;
       
       categories.forEach(c => {
@@ -614,7 +662,6 @@
       input.value = '';
       document.getElementById('search-btn-icon').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>`;
 
-      // বটের ভেতর সঠিক ব্যাক নেভিগেশন মেইনটেইন করার লজিক
       const tg = window.Telegram?.WebApp;
 
       if (tab === 'daily') {
@@ -625,11 +672,10 @@
         
         pageTitleSection.classList.remove('hidden');
         document.getElementById('page-main-title').innerText = "Daily Updates";
-        // রিয়েল-টাইমে মোট প্রম্পট সংখ্যা ক্যালকুলেট করে সাবটাইটেলে রেন্ডার করা
         document.getElementById('page-sub-title').innerText = `${prompts.length} Daily Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // ব্যাক বাটন শো করবে [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
       } else if (tab === 'favorite') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -641,7 +687,7 @@
         document.getElementById('page-sub-title').innerText = `${favorites.length} Favorite Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // ব্যাক বাটন শো করবে [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
       } else if (tab === 'history') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -661,7 +707,7 @@
         document.getElementById('page-sub-title').innerText = `${historyList.length} Generated Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // ব্যাক বাটন শো করবে [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
       } else if (tab === 'menu') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -669,9 +715,8 @@
         pageTitleSection.classList.add('hidden');
         settingsScreen.classList.remove('hidden');
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // ব্যাক বাটন শো করবে [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
       } else {
-        // Home ট্যাব (এখানে টেলিগ্রামের ব্যাক বাটন হাইড থাকবে)
         header.classList.remove('hidden');
         chips.classList.remove('hidden');
         grid.classList.remove('hidden');
@@ -679,7 +724,7 @@
         settingsScreen.classList.add('hidden');
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.hide(); // ব্যাক বাটন হাইড হবে [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.hide(); // Back button hides
       }
     };
 
@@ -731,7 +776,7 @@
 
       updatePreviewFavBtn();
 
-      // প্রিভিউতে গেলে টেলিগ্রাম ব্যাক বাটন শো করবে [১.১.২]
+      // Show back button on Telegram app header [১.১.২]
       const tg = window.Telegram?.WebApp;
       if (tg && tg.BackButton) {
         tg.BackButton.show();
@@ -764,7 +809,7 @@
       
       renderPrompts();
 
-      // হোম পেজে ফিরে আসলে টেলিগ্রাম ব্যাক বাটন হাইড হবে [১.১.২]
+      // Hide back button on Telegram app header [১.১.২]
       const tg = window.Telegram?.WebApp;
       if (tg && tg.BackButton) {
         tg.BackButton.hide();
@@ -829,14 +874,14 @@
       document.getElementById('privacy-modal').classList.add('hidden');
     };
 
-    // টেলিগ্রামের অফিশিয়াল ব্যাক বাটন ক্লিক হ্যান্ডলার (টেলিগ্রামের ভেতর ব্যাক বাটন কন্ট্রোল করবে) [১, ১.১.২]
+    // Native Telegram Back Button click event receiver [১, ১.১.২]
     const tg = window.Telegram?.WebApp;
     if (tg && tg.BackButton) {
       tg.BackButton.onClick(() => {
         if (activePrompt) {
-          closePreview(); // প্রিভিউ পেজে থাকলে হোমে ফিরবে
+          closePreview(); // Back to home if in preview page
         } else if (currentTab !== 'home') {
-          switchTab('home'); // অন্য ট্যাবে থাকলে হোমে ফিরবে
+          switchTab('home'); // Back to home if in other tabs
         }
       });
     }
