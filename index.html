@@ -107,7 +107,7 @@
 
     <!-- Main Content Area -->
     <main class="flex-1 p-4 w-full max-w-full">
-      <!-- Dynamic Page Title (For Daily, Favorite, and History Tabs) -->
+      <!-- Dynamic Page Title -->
       <div id="page-title-section" class="hidden mb-6">
         <h2 id="page-main-title" class="text-2xl font-bold">Daily Updates</h2>
         <p id="page-sub-title" class="text-xs text-gray-400">8 Daily Prompts</p>
@@ -242,13 +242,12 @@
     </div>
 
     <!-- Action Area -->
-    <div class="mb-6">
+    <div class="mb-6 animate-fadeIn">
       <button id="generate-btn" class="w-full py-4 bg-[#0066cc] text-white font-semibold rounded-2xl hover:bg-[#0052a3] transition-all">
         Generate Prompt
       </button>
       
       <div id="prompt-box-container" class="hidden space-y-4">
-        <!-- প্রম্পট বক্সে break-words এবং whitespace-pre-wrap দিয়ে টেক্সট ওভারফ্লো ফিক্স করা হয়েছে -->
         <div id="prompt-text" class="p-4 bg-[#1c1c1e] rounded-2xl border border-gray-800 text-sm text-gray-300 leading-relaxed break-words whitespace-pre-wrap overflow-hidden">
           <!-- Prompt text goes here -->
         </div>
@@ -259,7 +258,7 @@
       </div>
     </div>
 
-    <!-- ডাইনামিক এডস্টেরা ন্যাটিভ অ্যাড স্লট (অ্যাডমিন প্যানেল থেকে আইডি নিয়ে সচল হবে) -->
+    <!-- ডাইনামিক Adsterra Native Ad Container -->
     <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
       <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
       <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[90px]">
@@ -351,7 +350,7 @@
       adsgramEnabled: true,
       monetagEnabled: true,
       adsterraEnabled: true,
-      adsterraKey: '',
+      adsterraCode: '', // Added for raw HTML script injection [৩]
       maintenanceMode: false,
       bannerEnabled: false,
       bannerText: ''
@@ -383,7 +382,7 @@
       });
     }
 
-    // Dynamic Telegram user details collection [১, ৩]
+    // Dynamic Telegram user details collection from the Telegram client [১, ৩]
     async function syncTelegramUser() {
       const tg = window.Telegram?.WebApp;
       if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -397,7 +396,7 @@
             username: tgUser.username || "",
             joined_at: new Date().getTime()
           }, { merge: true });
-          console.log("Telegram user synced successfully.");
+          console.log("Telegram user synced to database successfully.");
         } catch (e) {
           console.error("Error saving user:", e);
         }
@@ -445,14 +444,15 @@
         if (exist) exist.remove();
       }
 
-      // PRO: Adsterra Native Ad Integration
+      // PRO: Adsterra Raw HTML Native Ad Integration
       const adsterraContainer = document.getElementById('native-ad-container');
-      if (configSettings.adsterraEnabled && configSettings.adsterraKey) {
+      if (configSettings.adsterraEnabled && configSettings.adsterraCode) {
         adsterraContainer.classList.remove('hidden');
-        injectAdsterraNative(configSettings.adsterraKey);
+        injectAdsterraNative(configSettings.adsterraCode);
       } else {
         adsterraContainer.classList.add('hidden');
         document.getElementById('native-ad-slot').innerHTML = '';
+        document.getElementById('native-ad-slot').removeAttribute('data-loaded');
       }
     }
 
@@ -468,33 +468,35 @@
       document.body.appendChild(s);
     }
 
-    // Inject Adsterra Native Banner script tags dynamically
-    function injectAdsterraNative(adKey) {
+    // Inject Adsterra Native script tags dynamically via DOM Parser to avoid browser script lock
+    function injectAdsterraNative(htmlCode) {
       const slot = document.getElementById('native-ad-slot');
-      if (!adKey || !slot) return;
-      if (slot.getAttribute('data-loaded') === adKey) return; // Prevent multiple requests
+      if (!htmlCode || !slot) return;
+      if (slot.getAttribute('data-loaded') === btoa(htmlCode)) return; // Prevent multiple requests
       
       slot.innerHTML = ''; // Clear previous
       
-      const scriptConfig = document.createElement('script');
-      scriptConfig.type = 'text/javascript';
-      scriptConfig.text = `
-        atOptions = {
-          'key' : '${adKey}',
-          'format' : 'iframe',
-          'height' : 90,
-          'width' : 320,
-          'params' : {}
-        };
-      `;
+      const parser = new DOMParser();
+      const docParsed = parser.parseFromString(htmlCode, 'text/html');
       
-      const scriptInvoke = document.createElement('script');
-      scriptInvoke.type = 'text/javascript';
-      scriptInvoke.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
+      // Append non-script elements (like the div container) first
+      const nonScripts = docParsed.body.querySelectorAll(':not(script)');
+      nonScripts.forEach(node => {
+        slot.appendChild(document.importNode(node, true));
+      });
       
-      slot.appendChild(scriptConfig);
-      slot.appendChild(scriptInvoke);
-      slot.setAttribute('data-loaded', adKey);
+      // Append script elements programmatically to force execution
+      const scripts = docParsed.body.querySelectorAll('script');
+      scripts.forEach(oldScript => {
+        const newScript = document.createElement('script');
+        Array.from(oldScript.attributes).forEach(attr => {
+          newScript.setAttribute(attr.name, attr.value);
+        });
+        newScript.textContent = oldScript.textContent;
+        slot.appendChild(newScript);
+      });
+      
+      slot.setAttribute('data-loaded', btoa(htmlCode));
     }
 
     // Load and execute Adsgram.io Ad
@@ -672,6 +674,7 @@
         
         pageTitleSection.classList.remove('hidden');
         document.getElementById('page-main-title').innerText = "Daily Updates";
+        // রিয়েল-টাইমে মোট প্রম্পট সংখ্যা ক্যালকুলেট করে সাবটাইটেলে রেন্ডার করা
         document.getElementById('page-sub-title').innerText = `${prompts.length} Daily Prompts`;
         renderPrompts();
 
