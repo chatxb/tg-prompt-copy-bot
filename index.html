@@ -262,7 +262,7 @@
     <!-- ডাইনামিক Adsterra HTML Native Ad Container (Aspect Ratio 1:1) -->
     <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
       <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
-      <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[90px]">
+      <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden">
         <!-- Adsterra script will be injected here dynamically -->
       </div>
     </div>
@@ -469,7 +469,7 @@
       document.body.appendChild(s);
     }
 
-    // Dynamic clean iframe generator to safely execute raw Adsterra script inside separate DOM context [৩]
+    // Dynamic self-resizing iframe generator to smoothly execute Adsterra code and automatically match ad size dynamically [৩]
     function injectAdsterraNative(htmlCode) {
       const slot = document.getElementById('native-ad-slot');
       if (!htmlCode || !slot) return;
@@ -477,9 +477,12 @@
       
       slot.innerHTML = ''; // Clear previous
       
-      // index.html-এর মেইন বডিতে বাটনগুলোর নিচে ১:১ সুন্দর উইজেট দেখানোর জন্য আইফ্রেমটির প্রস্থ এবং উচ্চতা ২৮০ পিক্সেল ফিক্সড করা হয়েছে
       const iframe = document.createElement('iframe');
-      iframe.className = "w-[280px] h-[280px] border-none overflow-hidden";
+      // Adsterra-এর কোডটি তার আসল সাইজে স্ক্রিনে লোড করার জন্য কন্টেইনারটির প্রস্থ ১০০% রেখে হাইট ০ করা হয়েছে এবং পরবর্তীতে স্ক্রিপ্ট দিয়ে হাইট ডাইনামিক করা হচ্ছে [৩]
+      iframe.style.width = '100%'; 
+      iframe.style.height = '0px'; 
+      iframe.style.border = 'none';
+      iframe.style.overflow = 'hidden';
       iframe.setAttribute('scrolling', 'no');
       
       slot.appendChild(iframe);
@@ -500,11 +503,43 @@
         </head>
         <body>
           ${htmlCode}
+          <script>
+            // Intercept all link clicks inside this iframe and open them using Telegram's In-App Browser [১.১.২]
+            document.addEventListener('click', function(e) {
+              const target = e.target.closest('a');
+              if (target && target.href) {
+                e.preventDefault();
+                if (window.parent && window.parent.Telegram && window.parent.Telegram.WebApp) {
+                  window.parent.Telegram.WebApp.openLink(target.href);
+                } else {
+                  window.open(target.href, '_blank');
+                }
+              }
+            });
+          <\/script>
         </body>
         </html>
       `);
       iframeDoc.close();
       
+      // ডাইনামিক হাইট রিসাইজিং মেকানিজম (চেক করবে Adsterra কত হাইট নিয়ে লোড হয়েছে এবং নিজে থেকেই আইফ্রেমের হাইট অ্যাডজাস্ট করবে)
+      let checks = 0;
+      const resizeInterval = setInterval(() => {
+        try {
+          const currentDoc = iframe.contentDocument || iframe.contentWindow.document;
+          if (currentDoc && currentDoc.body) {
+            const height = currentDoc.body.scrollHeight || currentDoc.documentElement.scrollHeight;
+            if (height > 50) { // Only resize if ad actually rendered something
+              iframe.style.height = height + 'px';
+            }
+          }
+        } catch (e) {
+          clearInterval(resizeInterval);
+        }
+        checks++;
+        if (checks > 10) clearInterval(resizeInterval); // Stop checking after 5 seconds to optimize memory
+      }, 500);
+
       slot.setAttribute('data-loaded', btoa(htmlCode));
     }
 
