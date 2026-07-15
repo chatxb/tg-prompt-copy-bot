@@ -259,7 +259,7 @@
       </div>
     </div>
 
-    <!-- ডাইনামিক Adsterra HTML Native Ad Container (Locked in sandbox iframe) [৩] -->
+    <!-- ডাইনামিক Adsterra HTML Native Ad Container (Aspect Ratio 1:1) -->
     <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
       <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
       <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[90px]">
@@ -351,7 +351,7 @@
       adsgramEnabled: true,
       monetagEnabled: true,
       adsterraEnabled: true,
-      adsterraCode: '', // Upgraded to load full raw HTML strings seamlessly [৩]
+      adsterraCode: '', // Dynamic Adsterra raw HTML code container [৩]
       maintenanceMode: false,
       bannerEnabled: false,
       bannerText: ''
@@ -477,26 +477,25 @@
       
       slot.innerHTML = ''; // Clear previous
       
-      // Creating isolated iframe container
+      // index.html-এর মেইন বডিতে বাটনগুলোর নিচে ১:১ সুন্দর উইজেট দেখানোর জন্য আইফ্রেমটির প্রস্থ এবং উচ্চতা ২৮০ পিক্সেল ফিক্সড করা হয়েছে
       const iframe = document.createElement('iframe');
-      iframe.style.width = '100%';
-      iframe.style.height = '115px'; // Adjust frame height dynamically matching standard Adsterra widget
-      iframe.style.border = 'none';
-      iframe.style.overflow = 'hidden';
+      iframe.className = "w-[280px] h-[280px] border-none overflow-hidden";
       iframe.setAttribute('scrolling', 'no');
       
       slot.appendChild(iframe);
       
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
       iframeDoc.open();
-      // Inject standard sandboxed frame markup to execute scripts
+      // Inject standard sandboxed frame markup to execute scripts safely
       iframeDoc.write(`
         <!DOCTYPE html>
         <html>
         <head>
           <style>
             body { margin: 0; padding: 0; background: transparent; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-            iframe { max-width: 100%; }
+            /* Adsterra-এর ভেতরের কন্টেইনার এবং আইফ্রেমগুলোকে ১০০% সাইজ নিতে সাহায্য করবে কিন্তু কোনো কনফ্লিক্ট করবে না */
+            body > div, body > iframe { width: 100% !important; height: 100% !important; border: none !important; margin: 0 !important; }
+            iframe, div { max-width: 100%; max-height: 100%; border: none !important; }
           </style>
         </head>
         <body>
