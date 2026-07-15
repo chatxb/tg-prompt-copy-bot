@@ -82,7 +82,7 @@
         </div>
       </div>
 
-      <!-- Inline Search Input (Fills the space without layout shifts) -->
+      <!-- Inline Search Input -->
       <div id="header-search-content" class="hidden flex-1 mr-3 animate-fadeIn">
         <input id="search-input" type="text" placeholder="Search prompts..." class="w-full p-2.5 bg-[#1c1c1e] border border-gray-800 rounded-xl outline-none text-sm focus:border-blue-500 app-card">
       </div>
@@ -236,8 +236,9 @@
       </button>
     </header>
 
-    <div class="rounded-[28px] overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] mb-6">
-      <img id="preview-img" src="" alt="" class="w-full h-full object-cover">
+    <!-- প্রিভিউ ইমেজের পোর্ট্রেট রেশিও aspect-[3/4] ঠিক রেখে উচ্চতা সর্বোচ্চ h-[260px] সেট করা হয়েছে যাতে স্ক্রিন জুড়ে না থাকে -->
+    <div class="rounded-[24px] overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] h-[260px] w-auto mx-auto mb-6 flex items-center justify-center">
+      <img id="preview-img" src="" alt="" class="h-full w-auto object-cover">
     </div>
 
     <!-- Action Area -->
@@ -247,7 +248,8 @@
       </button>
       
       <div id="prompt-box-container" class="hidden space-y-4">
-        <div id="prompt-text" class="p-4 bg-[#1c1c1e] rounded-2xl border border-gray-800 text-sm text-gray-300 leading-relaxed">
+        <!-- প্রম্পট বক্সে break-words এবং whitespace-pre-wrap দিয়ে টেক্সট ওভারফ্লো ফিক্স করা হয়েছে -->
+        <div id="prompt-text" class="p-4 bg-[#1c1c1e] rounded-2xl border border-gray-800 text-sm text-gray-300 leading-relaxed break-words whitespace-pre-wrap overflow-hidden">
           <!-- Prompt text goes here -->
         </div>
         <button id="copy-btn" class="w-full py-4 bg-transparent border border-[#0066cc] text-[#0066cc] font-semibold rounded-2xl flex items-center justify-center gap-2 hover:bg-[#0066cc]/10">
@@ -303,7 +305,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Firebase configuration (Your exact keys)
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBP9d5ekOd0zvO-D7Fq8aXmNoS2aqryvVA",
       authDomain: "tg-bot-prompt-copy.firebaseapp.com",
@@ -347,7 +349,7 @@
 
     // Real-time Database sync
     function initDataSync() {
-      // Sync Telegram User to Firestore automatically (Zero-Backend feature!)
+      // রিয়েল-টাইমে টেলিগ্রাম ইউজার সংগ্রহ ট্রিক
       syncTelegramUser();
 
       onSnapshot(collection(db, "categories"), (snapshot) => {
@@ -371,7 +373,7 @@
       });
     }
 
-    // Dynamic Telegram user details collection from the Telegram client
+    // Dynamic Telegram user details collection from the Telegram client [১, ৩]
     async function syncTelegramUser() {
       const tg = window.Telegram?.WebApp;
       if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -464,13 +466,14 @@
       });
     }
 
-    // Render category horizontal chips
+    // Render category horizontal chips (Enlarged design)
     function renderCategoryChips() {
       const container = document.getElementById('category-chips-container');
-      let html = `<button onclick="filterCategory('Home')" class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === 'Home' ? 'bg-[#0066cc] text-white shadow-lg shadow-blue-500/10' : 'bg-[#222222] text-gray-300'}">Home</button>`;
+      // চিপসের সাইজ text-sm এবং প্যাডিং px-5 py-2.5 দিয়ে কাস্টমাইজড করা হয়েছে
+      let html = `<button onclick="filterCategory('Home')" class="px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${selectedCategory === 'Home' ? 'bg-[#0066cc] text-white shadow-lg shadow-blue-500/10' : 'bg-[#222222] text-gray-300'}">Home</button>`;
       
       categories.forEach(c => {
-        html += `<button onclick="filterCategory('${c.name}')" class="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === c.name ? 'bg-[#0066cc] text-white shadow-lg shadow-blue-500/10' : 'bg-[#222222] text-gray-300'}">${c.name}</button>`;
+        html += `<button onclick="filterCategory('${c.name}')" class="px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${selectedCategory === c.name ? 'bg-[#0066cc] text-white shadow-lg shadow-blue-500/10' : 'bg-[#222222] text-gray-300'}">${c.name}</button>`;
       });
       container.innerHTML = html;
     }
