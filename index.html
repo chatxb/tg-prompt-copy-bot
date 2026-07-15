@@ -262,6 +262,7 @@
     <!-- ডাইনামিক Adsterra HTML Native Ad Container (Aspect Ratio 1:1) -->
     <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
       <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
+      <!-- w-full দিয়ে কন্টেইনার সাইজ চওড়া করা হয়েছে এবং উইজেট নিজের মতো রিয়েল-টাইমে সাইজ নেবে -->
       <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden">
         <!-- Adsterra script will be injected here dynamically -->
       </div>
@@ -469,7 +470,7 @@
       document.body.appendChild(s);
     }
 
-    // Dynamic self-resizing iframe generator to smoothly execute Adsterra code and automatically match ad size dynamically [৩]
+    // Dynamic clean iframe generator to safely execute raw Adsterra script inside parent page directly [৩]
     function injectAdsterraNative(htmlCode) {
       const slot = document.getElementById('native-ad-slot');
       if (!htmlCode || !slot) return;
@@ -477,8 +478,8 @@
       
       slot.innerHTML = ''; // Clear previous
       
-      const iframe = document.createElement('iframe');
       // Adsterra-এর কোডটি তার আসল সাইজে স্ক্রিনে লোড করার জন্য কন্টেইনারটির প্রস্থ ১০০% রেখে হাইট ০ করা হয়েছে এবং পরবর্তীতে স্ক্রিপ্ট দিয়ে হাইট ডাইনামিক করা হচ্ছে [৩]
+      const iframe = document.createElement('iframe');
       iframe.style.width = '100%'; 
       iframe.style.height = '0px'; 
       iframe.style.border = 'none';
@@ -497,7 +498,7 @@
           <style>
             body { margin: 0; padding: 0; background: transparent; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
             /* Adsterra-এর ভেতরের কন্টেইনার এবং আইফ্রেমগুলোকে ১০০% সাইজ নিতে সাহায্য করবে কিন্তু কোনো কনফ্লিক্ট করবে না */
-            body > div, body > iframe { width: 100% !important; height: 100% !important; border: none !important; margin: 0 !important; }
+            body > div, body > iframe { width: 100% !important; border: none !important; margin: 0 !important; }
             iframe, div { max-width: 100%; max-height: 100%; border: none !important; }
           </style>
         </head>
@@ -723,7 +724,7 @@
         document.getElementById('page-sub-title').innerText = `${prompts.length} Daily Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
       } else if (tab === 'favorite') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -735,7 +736,7 @@
         document.getElementById('page-sub-title').innerText = `${favorites.length} Favorite Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
       } else if (tab === 'history') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -755,7 +756,7 @@
         document.getElementById('page-sub-title').innerText = `${historyList.length} Generated Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
       } else if (tab === 'menu') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -763,7 +764,7 @@
         pageTitleSection.classList.add('hidden');
         settingsScreen.classList.remove('hidden');
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
       } else {
         header.classList.remove('hidden');
         chips.classList.remove('hidden');
@@ -772,7 +773,7 @@
         settingsScreen.classList.add('hidden');
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.hide(); // Back button hides [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.hide(); // Back button hides
       }
     };
 
@@ -824,7 +825,7 @@
 
       updatePreviewFavBtn();
 
-      // Show back button on Telegram app header [১.১.২]
+      // Show back button on Telegram app header
       const tg = window.Telegram?.WebApp;
       if (tg && tg.BackButton) {
         tg.BackButton.show();
@@ -857,7 +858,7 @@
       
       renderPrompts();
 
-      // Hide back button on Telegram app header [১.১.২]
+      // Hide back button on Telegram app header
       const tg = window.Telegram?.WebApp;
       if (tg && tg.BackButton) {
         tg.BackButton.hide();
@@ -922,7 +923,7 @@
       document.getElementById('privacy-modal').classList.add('hidden');
     };
 
-    // Native Telegram Back Button click event receiver [১, ১.১.২]
+    // Native Telegram Back Button click event receiver
     const tg = window.Telegram?.WebApp;
     if (tg && tg.BackButton) {
       tg.BackButton.onClick(() => {
