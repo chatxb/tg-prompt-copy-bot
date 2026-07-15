@@ -73,7 +73,7 @@
 <body class="bg-[#121212] text-white font-sans min-h-screen sm:flex sm:items-center sm:justify-center sm:py-8 transition-colors duration-300">
 
   <!-- ==================================================== -->
-  <!-- ০. ডাইনামিক স্প্ল্যাশ স্ক্রিন (Splash Screen Overlay) -->
+  <!-- 0. Dynamic Splash Screen Overlay -->
   <!-- ==================================================== -->
   <div id="splash-screen" class="fixed inset-0 bg-[#121212] z-[120] flex flex-col items-center justify-center p-6 text-center transition-opacity duration-500">
     <div class="w-16 h-16 rounded-full bg-[#002b5c] flex items-center justify-center text-[#0a84ff] mb-6 shadow-lg shadow-blue-500/10 animate-bounce">
@@ -83,14 +83,13 @@
     </div>
     <h2 id="splash-app-title" class="text-2xl font-bold tracking-wide mb-1">Prompt House</h2>
     <p id="splash-welcome-text" class="text-xs text-gray-400 mb-8">Welcome App</p>
-    <!-- প্রোগ্রেস বার লুপ -->
     <div class="w-32 h-1 bg-gray-800 rounded-full overflow-hidden relative">
       <div class="absolute top-0 left-0 h-full bg-[#0066cc] rounded-full animate-loadingBar"></div>
     </div>
   </div>
 
   <!-- ==================================================== -->
-  <!-- ১. ইউজার অ্যাপ ভিউ (User App View) -->
+  <!-- 1. User Application View -->
   <!-- ==================================================== -->
   <div id="user-view" class="w-full sm:max-w-md sm:rounded-[36px] sm:border sm:border-gray-800/80 overflow-hidden flex flex-col relative pb-28 select-none min-h-screen sm:min-h-[85vh] bg-[#121212] transition-all duration-300">
     
@@ -263,8 +262,8 @@
       </button>
     </header>
 
-    <!-- প্রিভিউ ইমেজের পোর্ট্রেট রেশিও aspect-[3/4] ঠিক রেখে উচ্চতা সর্বোচ্চ h-[260px] সেট করা হয়েছে -->
-    <div class="rounded-[24px] overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] h-[260px] w-auto mx-auto mb-6 flex items-center justify-center">
+    <!-- প্রিভিউ ইমেজের কন্টেইনারটি ডাইনামিক রেশিওতে এবং সর্বোচ্চ h-[260px] উচ্চতায় লক করা হয়েছে -->
+    <div id="preview-img-container" class="rounded-[24px] overflow-hidden border border-gray-800 bg-[#1e1e1e] h-[260px] w-auto mx-auto mb-6 flex items-center justify-center">
       <img id="preview-img" src="" alt="" class="h-full w-auto object-cover">
     </div>
 
@@ -275,8 +274,8 @@
       </button>
       
       <div id="prompt-box-container" class="hidden space-y-4">
-        <!-- প্রম্পট বক্সে break-words এবং whitespace-pre-wrap দিয়ে টেক্সট ওভারফ্লো ফিক্স করা হয়েছে -->
-        <div id="prompt-text" class="p-4 bg-[#1c1c1e] rounded-2xl border border-gray-800 text-sm text-gray-300 leading-relaxed break-words whitespace-pre-wrap overflow-hidden">
+        <!-- প্রম্পট বক্সে max-h-[150px] এবং overflow-y-auto যোগ করে স্ক্রল অপশন দেওয়া হয়েছে -->
+        <div id="prompt-text" class="p-4 bg-[#1c1c1e] rounded-2xl border border-gray-800 text-sm text-gray-300 leading-relaxed break-words whitespace-pre-wrap overflow-y-auto max-h-[150px] no-scrollbar">
           <!-- Prompt text goes here -->
         </div>
         <button id="copy-btn" class="w-full py-4 bg-transparent border border-[#0066cc] text-[#0066cc] font-semibold rounded-2xl flex items-center justify-center gap-2 hover:bg-[#0066cc]/10">
@@ -520,7 +519,7 @@
       document.body.appendChild(s);
     }
 
-    // Dynamic self-resizing iframe generator to smoothly execute Adsterra code (Upgraded with pre-allocated 260px height to prevent jumping) [৩]
+    // Dynamic self-resizing iframe generator to smoothly execute Adsterra code and automatically match ad size dynamically [৩]
     function injectAdsterraNative(htmlCode) {
       const slot = document.getElementById('native-ad-slot');
       if (!htmlCode || !slot) return;
@@ -528,10 +527,10 @@
       
       slot.innerHTML = ''; // Clear previous
       
-      // কন্টেইনারের সাইজ ধপ করে চ্যাপ্টা হওয়া থেকে বাঁচাতে আইফ্রেমটির ইনিশিয়াল হাইট ২৬০ পিক্সেল করে দেওয়া হলো [৩]
+      // index.html-এর মেইন বডিতে বাটনগুলোর নিচে ১:১ সুন্দর উইজেট দেখানোর জন্য আইফ্রেমটির প্রস্থ এবং উচ্চতা ২৮০ পিক্সেল ফিক্সড করা হয়েছে
       const iframe = document.createElement('iframe');
-      iframe.style.width = '260px'; 
-      iframe.style.height = '260px'; 
+      iframe.style.width = '100%'; 
+      iframe.style.height = '0px'; 
       iframe.style.border = 'none';
       iframe.style.overflow = 'hidden';
       iframe.setAttribute('scrolling', 'no');
@@ -624,7 +623,7 @@
       container.innerHTML = html;
     }
 
-    // Render prompts grid with search filtering
+    // Render prompts grid with search filtering (Dynamic Aspect Ratio for Uploads)
     function renderPrompts() {
       const container = document.getElementById('prompts-grid');
       let filtered = prompts;
@@ -654,8 +653,12 @@
       let html = '';
       filtered.forEach(p => {
         const isFav = favorites.includes(p.id);
+        
+        // ফায়ারবেস থেকে আপলোড করা ছবির আসল রেশিও (যেমন: 16:9 -> 16/9) ডাইনামিকালি সেট করার লজিক
+        const ratio = p.aspectRatio ? p.aspectRatio.replace(':', '/') : '3/4';
+
         html += `
-          <div onclick="viewPrompt('${p.id}')" class="relative rounded-[24px] overflow-hidden border border-gray-800/60 bg-[#1e1e1e] app-card aspect-[3/4] cursor-pointer hover:scale-[1.02] transition-transform">
+          <div onclick="viewPrompt('${p.id}')" style="aspect-ratio: ${ratio};" class="relative rounded-[24px] overflow-hidden border border-gray-800/60 bg-[#1e1e1e] app-card w-full cursor-pointer hover:scale-[1.02] transition-transform">
             <img src="${p.img}" alt="" class="w-full h-full object-cover" loading="lazy">
             <button onclick="favToggle('${p.id}', event)" class="absolute top-3 right-3 p-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white hover:scale-110 transition-transform">
               <svg class="w-5 h-5 ${isFav ? 'fill-red-500 text-red-500' : 'text-white'}" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
@@ -774,7 +777,7 @@
         document.getElementById('page-sub-title').innerText = `${prompts.length} Daily Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
       } else if (tab === 'favorite') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -786,7 +789,7 @@
         document.getElementById('page-sub-title').innerText = `${favorites.length} Favorite Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
       } else if (tab === 'history') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -806,7 +809,7 @@
         document.getElementById('page-sub-title').innerText = `${historyList.length} Generated Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
       } else if (tab === 'menu') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -814,7 +817,7 @@
         pageTitleSection.classList.add('hidden');
         settingsScreen.classList.remove('hidden');
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
       } else {
         header.classList.remove('hidden');
         chips.classList.remove('hidden');
@@ -823,7 +826,7 @@
         settingsScreen.classList.add('hidden');
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.hide(); // Back button hides
+        if (tg && tg.BackButton) tg.BackButton.hide(); // Back button hides [১.১.২]
       }
     };
 
@@ -859,7 +862,7 @@
     // Search query monitoring
     document.getElementById('search-input').addEventListener('input', renderPrompts);
 
-    // Open prompt preview overlay
+    // Open prompt preview overlay (Dynamic Aspect Ratio for Preview Images)
     window.viewPrompt = function(id) {
       activePrompt = prompts.find(p => p.id === id);
       if (!activePrompt) return;
@@ -869,6 +872,11 @@
 
       document.getElementById('preview-img').src = activePrompt.img;
       document.getElementById('prompt-text').innerText = activePrompt.promptText;
+
+      // প্রম্পটের ডাটাবেজে সেট করা আসল রেশিও অনুযায়ী প্রিভিউ পেজের ইমেজ কন্টেইনার অ্যাডজাস্ট হবে
+      const ratio = activePrompt.aspectRatio ? activePrompt.aspectRatio.replace(':', '/') : '3/4';
+      const imgContainer = document.getElementById('preview-img-container');
+      imgContainer.style.aspectRatio = ratio;
 
       document.getElementById('generate-btn').classList.remove('hidden');
       document.getElementById('prompt-box-container').classList.add('hidden');
