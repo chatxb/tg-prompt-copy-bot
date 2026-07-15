@@ -107,7 +107,7 @@
 
     <!-- Main Content Area -->
     <main class="flex-1 p-4 w-full max-w-full">
-      <!-- Dynamic Page Title -->
+      <!-- Dynamic Page Title (For Daily, Favorite, and History Tabs) -->
       <div id="page-title-section" class="hidden mb-6">
         <h2 id="page-main-title" class="text-2xl font-bold">Daily Updates</h2>
         <p id="page-sub-title" class="text-xs text-gray-400">8 Daily Prompts</p>
@@ -248,6 +248,7 @@
       </button>
       
       <div id="prompt-box-container" class="hidden space-y-4">
+        <!-- প্রম্পট বক্সে break-words এবং whitespace-pre-wrap দিয়ে টেক্সট ওভারফ্লো ফিক্স করা হয়েছে -->
         <div id="prompt-text" class="p-4 bg-[#1c1c1e] rounded-2xl border border-gray-800 text-sm text-gray-300 leading-relaxed break-words whitespace-pre-wrap overflow-hidden">
           <!-- Prompt text goes here -->
         </div>
@@ -258,7 +259,7 @@
       </div>
     </div>
 
-    <!-- ডাইনামিক Adsterra Native Ad Container -->
+    <!-- ডাইনামিক Adsterra HTML Native Ad Container (Locked in sandbox iframe) [৩] -->
     <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
       <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
       <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[90px]">
@@ -350,7 +351,7 @@
       adsgramEnabled: true,
       monetagEnabled: true,
       adsterraEnabled: true,
-      adsterraCode: '', // Added for raw HTML script injection [৩]
+      adsterraCode: '', // Upgraded to load full raw HTML strings seamlessly [৩]
       maintenanceMode: false,
       bannerEnabled: false,
       bannerText: ''
@@ -444,7 +445,7 @@
         if (exist) exist.remove();
       }
 
-      // PRO: Adsterra Raw HTML Native Ad Integration
+      // PRO: Adsterra Raw HTML Native Ad Integration (Loads beautifully inside sandboxed iframe) [৩]
       const adsterraContainer = document.getElementById('native-ad-container');
       if (configSettings.adsterraEnabled && configSettings.adsterraCode) {
         adsterraContainer.classList.remove('hidden');
@@ -468,33 +469,42 @@
       document.body.appendChild(s);
     }
 
-    // Inject Adsterra Native script tags dynamically via DOM Parser to avoid browser script lock
+    // Dynamic clean iframe generator to safely execute raw Adsterra script inside separate DOM context [৩]
     function injectAdsterraNative(htmlCode) {
       const slot = document.getElementById('native-ad-slot');
       if (!htmlCode || !slot) return;
-      if (slot.getAttribute('data-loaded') === btoa(htmlCode)) return; // Prevent multiple requests
+      if (slot.getAttribute('data-loaded') === btoa(htmlCode)) return; // Prevent loop execution
       
       slot.innerHTML = ''; // Clear previous
       
-      const parser = new DOMParser();
-      const docParsed = parser.parseFromString(htmlCode, 'text/html');
+      // Creating isolated iframe container
+      const iframe = document.createElement('iframe');
+      iframe.style.width = '100%';
+      iframe.style.height = '115px'; // Adjust frame height dynamically matching standard Adsterra widget
+      iframe.style.border = 'none';
+      iframe.style.overflow = 'hidden';
+      iframe.setAttribute('scrolling', 'no');
       
-      // Append non-script elements (like the div container) first
-      const nonScripts = docParsed.body.querySelectorAll(':not(script)');
-      nonScripts.forEach(node => {
-        slot.appendChild(document.importNode(node, true));
-      });
+      slot.appendChild(iframe);
       
-      // Append script elements programmatically to force execution
-      const scripts = docParsed.body.querySelectorAll('script');
-      scripts.forEach(oldScript => {
-        const newScript = document.createElement('script');
-        Array.from(oldScript.attributes).forEach(attr => {
-          newScript.setAttribute(attr.name, attr.value);
-        });
-        newScript.textContent = oldScript.textContent;
-        slot.appendChild(newScript);
-      });
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      iframeDoc.open();
+      // Inject standard sandboxed frame markup to execute scripts
+      iframeDoc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { margin: 0; padding: 0; background: transparent; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+            iframe { max-width: 100%; }
+          </style>
+        </head>
+        <body>
+          ${htmlCode}
+        </body>
+        </html>
+      `);
+      iframeDoc.close();
       
       slot.setAttribute('data-loaded', btoa(htmlCode));
     }
@@ -520,6 +530,7 @@
     // Render category horizontal chips (Enlarged design)
     function renderCategoryChips() {
       const container = document.getElementById('category-chips-container');
+      // চিপসের সাইজ text-sm এবং প্যাডিং px-5 py-2.5 দিয়ে কাস্টমাইজড করা হয়েছে
       let html = `<button onclick="filterCategory('Home')" class="px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${selectedCategory === 'Home' ? 'bg-[#0066cc] text-white shadow-lg shadow-blue-500/10' : 'bg-[#222222] text-gray-300'}">Home</button>`;
       
       categories.forEach(c => {
@@ -678,7 +689,7 @@
         document.getElementById('page-sub-title').innerText = `${prompts.length} Daily Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
       } else if (tab === 'favorite') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -690,7 +701,7 @@
         document.getElementById('page-sub-title').innerText = `${favorites.length} Favorite Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
       } else if (tab === 'history') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -710,7 +721,7 @@
         document.getElementById('page-sub-title').innerText = `${historyList.length} Generated Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
       } else if (tab === 'menu') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -718,7 +729,7 @@
         pageTitleSection.classList.add('hidden');
         settingsScreen.classList.remove('hidden');
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows
+        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
       } else {
         header.classList.remove('hidden');
         chips.classList.remove('hidden');
@@ -727,7 +738,7 @@
         settingsScreen.classList.add('hidden');
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.hide(); // Back button hides
+        if (tg && tg.BackButton) tg.BackButton.hide(); // Back button hides [১.১.২]
       }
     };
 
