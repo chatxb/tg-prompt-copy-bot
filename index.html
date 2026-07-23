@@ -157,7 +157,7 @@
           <a id="how-to-use-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-teal-500/10 text-teal-500">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
               </span>
               <span class="text-sm font-semibold">How to use?</span>
             </div>
@@ -190,7 +190,7 @@
           <a id="privacy-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-500">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
               </span>
               <span class="text-sm font-semibold">Privacy Policy</span>
             </div>
@@ -199,7 +199,7 @@
           <a id="support-link" href="#" target="_blank" class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-red-500/10 text-red-500">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
               </span>
               <span class="text-sm font-semibold">Contact Us</span>
             </div>
@@ -214,6 +214,9 @@
     </div>
   </div>
 
+  <!-- ==================================================== -->
+  <!-- 2. Preview Prompt Screen -->
+  <!-- ==================================================== -->
   <div id="preview-view" class="hidden w-full sm:max-w-md sm:rounded-[36px] sm:border sm:border-gray-800/80 overflow-hidden flex flex-col p-4 bg-[#121212] min-h-screen sm:min-h-[85vh] transition-all duration-300">
     <header class="flex justify-between items-center py-3 mb-4">
       <button onclick="closePreview()" class="p-1 text-gray-400 hover:text-white">
@@ -227,6 +230,7 @@
       <img id="preview-img" src="" alt="" class="h-full w-auto object-cover">
     </div>
 
+    <!-- Action Area -->
     <div class="mb-6 animate-fadeIn">
       <button id="generate-btn" class="w-full py-4 bg-[#0066cc] text-white font-semibold rounded-2xl hover:bg-[#0052a3] transition-all">
         Generate Prompt
@@ -241,6 +245,7 @@
       </div>
     </div>
 
+    <!-- Dynamic Adsterra HTML Native Ad Container (Aspect Ratio 1:1) -->
     <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
       <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
       <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[260px]"></div>
@@ -477,23 +482,26 @@
         </head>
         <body>
           ${htmlCode}
-          <script>
-            document.addEventListener('click', function(e) {
-              const target = e.target.closest('a');
-              if (target && target.href) {
-                e.preventDefault();
-                if (window.parent && window.parent.Telegram && window.parent.Telegram.WebApp) {
-                  window.parent.Telegram.WebApp.openLink(target.href);
-                } else {
-                  window.open(target.href, '_blank');
-                }
-              }
-            });
-          <\/script>
         </body>
         </html>
       `);
       iframeDoc.close();
+
+      const innerScript = iframeDoc.createElement('script');
+      innerScript.textContent = `
+        document.addEventListener('click', function(e) {
+          const target = e.target.closest('a');
+          if (target && target.href) {
+            e.preventDefault();
+            if (window.parent && window.parent.Telegram && window.parent.Telegram.WebApp) {
+              window.parent.Telegram.WebApp.openLink(target.href);
+            } else {
+              window.open(target.href, '_blank');
+            }
+          }
+        });
+      `;
+      iframeDoc.body.appendChild(innerScript);
       
       let checks = 0;
       const resizeInterval = setInterval(() => {
@@ -543,6 +551,7 @@
 
     function renderPrompts() {
       const container = document.getElementById('prompts-grid');
+      let html = '';
       let filtered = prompts;
       
       if (currentTab === 'daily') {
@@ -566,7 +575,6 @@
         );
       }
 
-      let html = '';
       filtered.forEach(p => {
         const isFav = favorites.includes(p.id);
         const ratio = p.aspectRatio ? p.aspectRatio.replace(':', '/') : '3/4';
@@ -627,7 +635,7 @@
         { 
           id: 'menu', 
           label: 'Menu', 
-          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" h="20" y1="18" y2="18"></line></svg>`
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" y1="18" y2="18"></line></svg>`
         }
       ];
 
@@ -792,7 +800,7 @@
       const isFav = favorites.includes(activePrompt.id);
       document.getElementById('preview-fav-btn').innerHTML = `
         <svg onclick="favToggle('${activePrompt.id}', event)" class="w-6 h-6 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-white'}" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2a5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
         </svg>
       `;
     }
