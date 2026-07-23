@@ -14,7 +14,7 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-    body {
+    body, * {
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
@@ -122,7 +122,6 @@
         <p id="page-sub-title" class="text-xs text-gray-400">8 Daily Prompts</p>
       </div>
 
-      <!-- ম্যাসনরি লেআউট columns-2 দিয়ে ডিজাইন ভাঙার চিরতরে সমাধান করা হয়েছে -->
       <div id="prompts-grid" class="columns-2 gap-3 space-y-3 w-full"></div>
 
       <div id="user-settings-screen" class="hidden flex flex-col w-full px-4">
@@ -404,6 +403,7 @@
       document.getElementById('how-to-use-link').href = configSettings.howToUseLink;
       document.getElementById('privacy-link').href = configSettings.privacyLink;
       document.getElementById('support-link').href = configSettings.contactLink;
+
       document.getElementById('share-link').href = configSettings.shareAppLink || ('https://t.me/share/url?url=' + encodeURIComponent(window.location.href));
 
       const maintenanceScreen = document.getElementById('maintenance-screen');
@@ -579,7 +579,7 @@
         const ratio = p.aspectRatio ? p.aspectRatio.replace(':', '/') : '3/4';
 
         html += `
-          <div onclick="viewPrompt('${p.id}')" style="aspect-ratio: ${ratio};" class="relative rounded-[24px] overflow-hidden border border-gray-800/60 bg-[#1e1e1e] app-card w-full cursor-pointer hover:scale-[1.02] transition-transform">
+          <div onclick="viewPrompt('${p.id}')" style="aspect-ratio: ${ratio};" class="break-inside-avoid mb-3 relative rounded-[24px] overflow-hidden border border-gray-800/60 bg-[#1e1e1e] app-card w-full cursor-pointer hover:scale-[1.02] transition-transform">
             <img src="${p.img}" alt="" class="w-full h-full object-cover" loading="lazy">
             <button onclick="favToggle('${p.id}', event)" class="absolute top-3 right-3 p-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white hover:scale-110 transition-transform">
               <svg class="w-5 h-5 ${isFav ? 'fill-red-500 text-red-500' : 'text-white'}" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
