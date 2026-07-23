@@ -166,7 +166,7 @@
           <a id="share-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-orange-500/10 text-orange-500">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="15.49"></line><line x1="15.41" y1="8.51" x2="8.59" y2="10.49"></line></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="15.49"></line><line x1="15.41" x2="8.59" y1="8.51" y2="10.49"></line></svg>
               </span>
               <span class="text-sm font-semibold">Share The app</span>
             </div>
@@ -199,7 +199,7 @@
           <a id="support-link" href="#" target="_blank" class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-red-500/10 text-red-500">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
               </span>
               <span class="text-sm font-semibold">Contact Us</span>
             </div>
@@ -214,6 +214,9 @@
     </div>
   </div>
 
+  <!-- ==================================================== -->
+  <!-- 2. Preview Prompt Screen -->
+  <!-- ==================================================== -->
   <div id="preview-view" class="hidden w-full sm:max-w-md sm:rounded-[36px] sm:border sm:border-gray-800/80 overflow-hidden flex flex-col p-4 bg-[#121212] min-h-screen sm:min-h-[85vh] transition-all duration-300">
     <header class="flex justify-between items-center py-3 mb-4">
       <button onclick="closePreview()" class="p-1 text-gray-400 hover:text-white">
@@ -227,6 +230,7 @@
       <img id="preview-img" src="" alt="" class="h-full w-auto object-cover">
     </div>
 
+    <!-- Action Area -->
     <div class="mb-6 animate-fadeIn">
       <button id="generate-btn" class="w-full py-4 bg-[#0066cc] text-white font-semibold rounded-2xl hover:bg-[#0052a3] transition-all">
         Generate Prompt
@@ -241,6 +245,7 @@
       </div>
     </div>
 
+    <!-- Native Ad container -->
     <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
       <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
       <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[260px]"></div>
@@ -272,6 +277,17 @@
         <span class="text-gray-500 text-xs">➔</span>
       </div>
     </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- 3. Dynamic Maintenance Mode Overlay -->
+  <!-- ==================================================== -->
+  <div id="maintenance-screen" class="hidden fixed inset-0 bg-[#121212] z-[100] flex flex-col items-center justify-center p-6 text-center">
+    <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-3xl mb-6 shadow-lg shadow-red-500/5 animate-pulse">
+      <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+    </div>
+    <h2 class="text-2xl font-bold mb-2">Under Maintenance</h2>
+    <p class="text-sm text-gray-400 max-w-xs leading-relaxed">We are currently updating our database. Prompt House will be back online shortly. Thank you for your patience!</p>
   </div>
 
   <script type="module">
@@ -350,6 +366,24 @@
       });
     }
 
+    function checkSplashDismissal() {
+      if (categoriesLoaded && promptsLoaded) {
+        dismissSplash();
+      }
+    }
+
+    function dismissSplash() {
+      if (splashDismissed) return;
+      splashDismissed = true;
+      const splash = document.getElementById('splash-screen');
+      if (splash) {
+        splash.classList.add('opacity-0');
+        setTimeout(() => {
+          splash.classList.add('hidden');
+        }, 500);
+      }
+    }
+
     async function syncTelegramUser() {
       const tg = window.Telegram?.WebApp;
       if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -372,6 +406,7 @@
     function applySettings() {
       document.getElementById('app-title').innerText = configSettings.appName;
       document.getElementById('app-subtitle').innerText = configSettings.welcomeText;
+      
       document.getElementById('splash-app-title').innerText = configSettings.appName || 'Prompt House';
       document.getElementById('splash-welcome-text').innerText = configSettings.welcomeText || 'Welcome App';
 
@@ -380,6 +415,7 @@
       document.getElementById('how-to-use-link').href = configSettings.howToUseLink;
       document.getElementById('privacy-link').href = configSettings.privacyLink;
       document.getElementById('support-link').href = configSettings.contactLink;
+
       document.getElementById('share-link').href = configSettings.shareAppLink || ('https://t.me/share/url?url=' + encodeURIComponent(window.location.href));
 
       const maintenanceScreen = document.getElementById('maintenance-screen');
