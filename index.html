@@ -73,23 +73,24 @@
 <body class="bg-[#121212] text-white font-sans min-h-screen sm:flex sm:items-center sm:justify-center sm:py-8 transition-colors duration-300">
 
   <!-- ==================================================== -->
-  <!-- 0. Dynamic Splash Screen Overlay -->
+  <!-- ০. ডাইনামিক স্প্ল্যাশ স্ক্রিন (Splash Screen Overlay) -->
   <!-- ==================================================== -->
   <div id="splash-screen" class="fixed inset-0 bg-[#121212] z-[120] flex flex-col items-center justify-center p-6 text-center transition-opacity duration-500">
     <div class="w-16 h-16 rounded-full bg-[#002b5c] flex items-center justify-center text-[#0a84ff] mb-6 shadow-lg shadow-blue-500/10 animate-bounce">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+        <circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
       </svg>
     </div>
     <h2 id="splash-app-title" class="text-2xl font-bold tracking-wide mb-1">Prompt House</h2>
     <p id="splash-welcome-text" class="text-xs text-gray-400 mb-8">Welcome App</p>
+    <!-- প্রোগ্রেস বার লুপ -->
     <div class="w-32 h-1 bg-gray-800 rounded-full overflow-hidden relative">
       <div class="absolute top-0 left-0 h-full bg-[#0066cc] rounded-full animate-loadingBar"></div>
     </div>
   </div>
 
   <!-- ==================================================== -->
-  <!-- 1. User Application View -->
+  <!-- ১. ইউজার অ্যাপ ভিউ (User App View) -->
   <!-- ==================================================== -->
   <div id="user-view" class="w-full sm:max-w-md sm:rounded-[36px] sm:border sm:border-gray-800/80 overflow-hidden flex flex-col relative pb-28 select-none min-h-screen sm:min-h-[85vh] bg-[#121212] transition-all duration-300">
     
@@ -145,12 +146,12 @@
       </div>
 
       <!-- Settings Screen (Tab 4) -->
-      <div id="user-settings-screen" class="hidden flex flex-col w-full px-1">
+      <div id="user-settings-screen" class="hidden flex flex-col w-full">
         <!-- App Header with Compass Logo -->
         <div class="flex flex-col items-center py-6">
           <div class="w-16 h-16 rounded-full bg-[#002b5c] flex items-center justify-center text-[#0a84ff] mb-3 shadow-lg">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+              <circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
             </svg>
           </div>
           <h2 class="text-2xl font-bold tracking-tight">Settings</h2>
@@ -163,7 +164,7 @@
           <div onclick="switchTab('history')" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2 rounded-xl bg-blue-500/10 text-blue-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
               </span>
               <span class="text-sm font-semibold">History</span>
             </div>
@@ -173,27 +174,27 @@
           <a id="follow-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-pink-500/10 text-pink-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
               </span>
               <span class="text-sm font-semibold">Follow Me</span>
             </div>
             <span class="text-gray-600 text-xs">➔</span>
           </a>
-          <!-- How to Use Link -->
+          <!-- How to Use Link (ডাবল ক্লোজিং এসভিজি ট্যাগ ব্যবহার করে আইকন ভাঙার সমস্যা সমাধান করা হয়েছে) -->
           <a id="how-to-use-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
-              <span class="p-2 rounded-xl bg-teal-500/10 text-teal-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+              <span class="p-2.5 rounded-xl bg-teal-500/10 text-teal-500">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
               </span>
               <span class="text-sm font-semibold">How to use?</span>
             </div>
             <span class="text-gray-600 text-xs">➔</span>
-          </a>
+          </div>
           <!-- Share App Link -->
           <a id="share-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
-              <span class="p-2 rounded-xl bg-orange-500/10 text-orange-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="15.49"/><line x1="15.41" x2="8.59" y1="8.51" y2="10.49"/></svg>
+              <span class="p-2.5 rounded-xl bg-orange-500/10 text-orange-500">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="15.49"></line><line x1="15.41" y1="8.51" x2="8.59" y2="10.49"></line></svg>
               </span>
               <span class="text-sm font-semibold">Share The app</span>
             </div>
@@ -220,7 +221,7 @@
           <a id="privacy-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
               </span>
               <span class="text-sm font-semibold">Privacy Policy</span>
             </div>
@@ -230,7 +231,7 @@
           <a id="support-link" href="#" target="_blank" class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-red-500/10 text-red-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
               </span>
               <span class="text-sm font-semibold">Contact Us</span>
             </div>
@@ -262,8 +263,8 @@
       </button>
     </header>
 
-    <!-- প্রিভিউ ইমেজের কন্টেইনারটি ডাইনামিক রেশিওতে এবং সর্বোচ্চ h-[260px] উচ্চতায় লক করা হয়েছে -->
-    <div id="preview-img-container" class="rounded-[24px] overflow-hidden border border-gray-800 bg-[#1e1e1e] h-[260px] w-auto mx-auto mb-6 flex items-center justify-center">
+    <!-- প্রিভিউ ইমেজের পোর্ট্রেট রেশিও aspect-[3/4] ঠিক রেখে উচ্চতা সর্বোচ্চ h-[260px] সেট করা হয়েছে -->
+    <div class="rounded-[24px] overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] h-[260px] w-auto mx-auto mb-6 flex items-center justify-center">
       <img id="preview-img" src="" alt="" class="h-full w-auto object-cover">
     </div>
 
@@ -298,7 +299,7 @@
       <a id="follow-link-preview" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50">
         <div class="flex items-center gap-3">
           <span class="p-2 rounded-xl bg-pink-500/10 text-pink-500">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
           </span>
           <div class="text-left">
             <p class="font-semibold text-sm">Follow Me</p>
@@ -310,7 +311,7 @@
       <div class="flex items-center justify-between p-4">
         <div class="flex items-center gap-3">
           <span class="p-2 rounded-xl bg-teal-500/10 text-teal-500">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
           </span>
           <div class="text-left">
             <p class="font-semibold text-sm">How to use?</p>
@@ -539,7 +540,7 @@
       
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
       iframeDoc.open();
-      // Inject standard sandboxed frame markup to execute scripts safely
+      // Inject standard sandboxed frame markup to execute scripts safely (ডবল ক্লোজিং ট্যাগ ফিক্সড করা হয়েছে যাতে আইকন না ভাঙে)
       iframeDoc.write(`
         <!DOCTYPE html>
         <html>
