@@ -4,12 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Prompt House</title>
-  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Custom scrollbar hiding */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -17,8 +14,6 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-
-    /* Disable long press selection and copy globally across the app */
     body, * {
       -webkit-user-select: none;
       -moz-user-select: none;
@@ -26,16 +21,12 @@
       user-select: none;
       -webkit-touch-callout: none;
     }
-
-    /* Allow normal typing and selection inside input elements only */
     input, textarea {
       -webkit-user-select: text !important;
       -moz-user-select: text !important;
       -ms-user-select: text !important;
       user-select: text !important;
     }
-
-    /* Light Theme Overrides */
     .light-theme {
       background-color: #f2f2f7 !important;
       color: #000000 !important;
@@ -75,8 +66,6 @@
       background-color: #ffffff !important;
       border-color: #e5e5ea !important;
     }
-
-    /* Splash Screen Loading Bar Animation */
     @keyframes loadingBar {
       0% { width: 0%; left: 0; }
       50% { width: 100%; left: 0; }
@@ -89,9 +78,6 @@
 </head>
 <body class="bg-[#121212] text-white font-sans min-h-screen sm:flex sm:items-center sm:justify-center sm:py-8 transition-colors duration-300">
 
-  <!-- ==================================================== -->
-  <!-- 0. Dynamic Splash Screen Overlay -->
-  <!-- ==================================================== -->
   <div id="splash-screen" class="fixed inset-0 bg-[#121212] z-[120] flex flex-col items-center justify-center p-6 text-center transition-opacity duration-500">
     <div class="w-16 h-16 rounded-full bg-[#002b5c] flex items-center justify-center text-[#0a84ff] mb-6 shadow-lg shadow-blue-500/10 animate-bounce">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -105,17 +91,10 @@
     </div>
   </div>
 
-  <!-- ==================================================== -->
-  <!-- 1. User Application View -->
-  <!-- ==================================================== -->
   <div id="user-view" class="w-full sm:max-w-md sm:rounded-[36px] sm:border sm:border-gray-800/80 overflow-hidden flex flex-col relative pb-28 select-none min-h-screen sm:min-h-[85vh] bg-[#121212] transition-all duration-300">
     
-    <!-- Zero-Jump Header Layout -->
     <header id="user-header" class="p-4 flex justify-between items-center bg-[#121212] sticky top-0 z-10 border-b border-transparent transition-colors duration-300">
-      
-      <!-- Standard Header Info -->
-      <div id="header-main-content" class="flex items-center gap-3 flex-1 min-w-0 transition-opacity duration-200">
-        <!-- Hamburger Menu Button -->
+      <div class="flex items-center gap-3 flex-1 min-w-0 transition-opacity duration-200">
         <button onclick="switchTab('menu')" class="text-gray-400 hover:text-white shrink-0">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
@@ -124,13 +103,6 @@
           <p id="app-subtitle" class="text-xs text-gray-400 truncate">Welcome App</p>
         </div>
       </div>
-
-      <!-- Inline Search Input -->
-      <div id="header-search-content" class="hidden flex-1 mr-3 animate-fadeIn">
-        <input id="search-input" type="text" placeholder="Search prompts..." class="w-full p-2.5 bg-[#1c1c1e] border border-gray-800 rounded-xl outline-none text-sm focus:border-blue-500 app-card">
-      </div>
-
-      <!-- Search Trigger Button -->
       <button onclick="toggleSearch()" class="text-gray-400 hover:text-white shrink-0">
         <svg id="search-btn-icon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -138,32 +110,21 @@
       </button>
     </header>
 
-    <!-- Dynamic Announcement Banner -->
     <div id="announcement-banner" class="hidden bg-yellow-500/20 border-b border-yellow-500/30 text-yellow-500 text-xs py-2.5 px-4 overflow-hidden relative shrink-0">
       <marquee id="banner-marquee-text" scrollamount="4" class="font-semibold"></marquee>
     </div>
 
-    <!-- Category Chips (Horizontal Scroll) -->
-    <div id="category-chips-container" class="flex gap-2 overflow-x-auto px-4 py-2 no-scrollbar scroll-smooth">
-      <!-- Loaded dynamically via JS -->
-    </div>
+    <div id="category-chips-container" class="flex gap-2 overflow-x-auto px-4 py-2 no-scrollbar scroll-smooth"></div>
 
-    <!-- Main Content Area -->
     <main class="flex-1 p-4 w-full max-w-full">
-      <!-- Dynamic Page Title (For Daily, Favorite, and History Tabs) -->
       <div id="page-title-section" class="hidden mb-6">
         <h2 id="page-main-title" class="text-2xl font-bold">Daily Updates</h2>
         <p id="page-sub-title" class="text-xs text-gray-400">8 Daily Prompts</p>
       </div>
 
-      <!-- Prompts Image Grid -->
-      <div id="prompts-grid" class="grid grid-cols-2 gap-3">
-        <!-- Image cards loaded dynamically -->
-      </div>
+      <div id="prompts-grid" class="grid grid-cols-2 gap-3"></div>
 
-      <!-- Settings Screen (Tab 4 with precise bounds padding px-4) -->
       <div id="user-settings-screen" class="hidden flex flex-col w-full px-4">
-        <!-- App Header with Compass Logo -->
         <div class="flex flex-col items-center py-6">
           <div class="w-16 h-16 rounded-full bg-[#002b5c] flex items-center justify-center text-[#0a84ff] mb-3 shadow-lg">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -173,20 +134,17 @@
           <h2 class="text-2xl font-bold tracking-tight">Settings</h2>
         </div>
 
-        <!-- App Actions -->
         <p class="text-xs text-gray-500 uppercase font-bold mb-2 tracking-wider">App Actions</p>
         <div class="bg-[#1c1c1e] bg-menu-box rounded-[24px] overflow-hidden mb-6 border border-gray-800/40 w-full">
-          <!-- History Button -->
           <div onclick="switchTab('history')" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2 rounded-xl bg-blue-500/10 text-blue-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
               </span>
               <span class="text-sm font-semibold">History</span>
             </div>
             <span class="text-gray-600 text-xs">➔</span>
           </div>
-          <!-- Follow Me Link -->
           <a id="follow-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-pink-500/10 text-pink-500">
@@ -196,7 +154,6 @@
             </div>
             <span class="text-gray-600 text-xs">➔</span>
           </a>
-          <!-- How to Use Link (No broken self-closing tags) -->
           <a id="how-to-use-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-teal-500/10 text-teal-500">
@@ -206,7 +163,6 @@
             </div>
             <span class="text-gray-600 text-xs">➔</span>
           </a>
-          <!-- Share App Link -->
           <a id="share-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-orange-500/10 text-orange-500">
@@ -216,7 +172,6 @@
             </div>
             <span class="text-gray-600 text-xs">➔</span>
           </a>
-          <!-- Theme Toggle Option -->
           <div onclick="toggleTheme()" class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2 rounded-xl bg-purple-500/10 text-purple-500">
@@ -224,7 +179,6 @@
               </span>
               <span class="text-sm font-semibold">Dark Theme</span>
             </div>
-            <!-- Toggle Switch -->
             <div id="theme-toggle-bg" class="w-11 h-6 flex items-center bg-[#0066cc] rounded-full p-1 transition-colors duration-300">
               <div id="theme-toggle-circle" class="bg-white w-4 h-4 rounded-full shadow-md transform translate-x-5 transition-transform duration-300" />
             </div>
@@ -233,7 +187,6 @@
 
         <p class="text-xs text-gray-500 uppercase font-bold mb-2 tracking-wider">Legal & Info</p>
         <div class="bg-[#1c1c1e] bg-menu-box rounded-[24px] overflow-hidden border border-gray-800/40 w-full mb-4">
-          <!-- Privacy Policy -->
           <a id="privacy-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-500">
@@ -243,7 +196,6 @@
             </div>
             <span class="text-gray-600 text-xs">➔</span>
           </a>
-          <!-- Contact Us Link -->
           <a id="support-link" href="#" target="_blank" class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-red-500/10 text-red-500">
@@ -257,44 +209,31 @@
       </div>
     </main>
 
-    <!-- Floating Navigation Bar -->
     <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] z-50">
-      <nav id="bottom-nav" class="bg-[#1c1c1e]/90 backdrop-blur-md border border-gray-800/80 rounded-full py-3 px-6 flex justify-between items-center shadow-2xl transition-colors duration-300">
-        <!-- Loaded dynamically via JS -->
-      </nav>
+      <nav id="bottom-nav" class="bg-[#1c1c1e]/90 backdrop-blur-md border border-gray-800/80 rounded-full py-3 px-6 flex justify-between items-center shadow-2xl transition-colors duration-300"></nav>
     </div>
   </div>
 
-  <!-- ==================================================== -->
-  <!-- 2. Preview Prompt Screen -->
-  <!-- ==================================================== -->
   <div id="preview-view" class="hidden w-full sm:max-w-md sm:rounded-[36px] sm:border sm:border-gray-800/80 overflow-hidden flex flex-col p-4 bg-[#121212] min-h-screen sm:min-h-[85vh] transition-all duration-300">
     <header class="flex justify-between items-center py-3 mb-4">
       <button onclick="closePreview()" class="p-1 text-gray-400 hover:text-white">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
       </button>
       <h1 class="text-lg font-bold">Preview Prompt</h1>
-      <button id="preview-fav-btn" class="p-1">
-        <!-- SVG Loaded dynamically -->
-      </button>
+      <button id="preview-fav-btn" class="p-1"></button>
     </header>
 
-    <!-- প্রিভিউ ইমেজের পোর্ট্রেট রেশিও aspect-[3/4] ঠিক রেখে উচ্চতা সর্বোচ্চ h-[260px] সেট করা হয়েছে -->
     <div id="preview-img-container" class="rounded-[24px] overflow-hidden border border-gray-800 bg-[#1e1e1e] aspect-[3/4] h-[260px] w-auto mx-auto mb-6 flex items-center justify-center">
       <img id="preview-img" src="" alt="" class="h-full w-auto object-cover">
     </div>
 
-    <!-- Action Area -->
     <div class="mb-6 animate-fadeIn">
       <button id="generate-btn" class="w-full py-4 bg-[#0066cc] text-white font-semibold rounded-2xl hover:bg-[#0052a3] transition-all">
         Generate Prompt
       </button>
       
       <div id="prompt-box-container" class="hidden space-y-4">
-        <!-- প্রম্পট বক্সে max-h-[150px] এবং overflow-y-auto যোগ করে স্ক্রল অপশন দেওয়া হয়েছে -->
-        <div id="prompt-text" class="p-4 bg-[#1c1c1e] rounded-2xl border border-gray-800 text-sm text-gray-300 leading-relaxed break-words whitespace-pre-wrap overflow-y-auto max-h-[150px] no-scrollbar">
-          <!-- Prompt text goes here -->
-        </div>
+        <div id="prompt-text" class="p-4 bg-[#1c1c1e] rounded-2xl border border-gray-800 text-sm text-gray-300 leading-relaxed break-words whitespace-pre-wrap overflow-y-auto max-h-[150px] no-scrollbar"></div>
         <button id="copy-btn" class="w-full py-4 bg-transparent border border-[#0066cc] text-[#0066cc] font-semibold rounded-2xl flex items-center justify-center gap-2 hover:bg-[#0066cc]/10">
           <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
           <span id="copy-btn-text">Copy Prompt</span>
@@ -302,13 +241,9 @@
       </div>
     </div>
 
-    <!-- ডাইনামিক Adsterra HTML Native Ad Container (Aspect Ratio 1:1) -->
     <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
       <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
-      <!-- layout jumping বন্ধ করতে কন্টেইনারটির মক হাইট min-h-[260px] সেট করা হয়েছে -->
-      <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[260px]">
-        <!-- Adsterra script will be injected here dynamically -->
-      </div>
+      <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[260px]"></div>
     </div>
 
     <div class="bg-[#1c1c1e] bg-menu-box rounded-[24px] overflow-hidden border border-gray-800/40">
@@ -339,25 +274,10 @@
     </div>
   </div>
 
-  <!-- ==================================================== -->
-  <!-- 3. Dynamic Maintenance Mode Overlay -->
-  <!-- ==================================================== -->
-  <div id="maintenance-screen" class="hidden fixed inset-0 bg-[#121212] z-[100] flex flex-col items-center justify-center p-6 text-center">
-    <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-3xl mb-6 shadow-lg shadow-red-500/5 animate-pulse">
-      <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-    </div>
-    <h2 class="text-2xl font-bold mb-2">Under Maintenance</h2>
-    <p class="text-sm text-gray-400 max-w-xs leading-relaxed">We are currently updating our database. Prompt House will be back online shortly. Thank you for your patience!</p>
-  </div>
-
-  <!-- ==================================================== -->
-  <!-- 5. Firebase and Application Logic Script -->
-  <!-- ==================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBP9d5ekOd0zvO-D7Fq8aXmNoS2aqryvVA",
       authDomain: "tg-bot-prompt-copy.firebaseapp.com",
@@ -371,7 +291,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Local State
     let currentTab = 'home';
     let selectedCategory = 'Home';
     let categories = [];
@@ -383,8 +302,8 @@
     let isSearchActive = false;
     let categoriesLoaded = false;
     let promptsLoaded = false;
+    let splashDismissed = false;
     
-    // Dynamic settings loaded from Firebase
     let configSettings = {
       appName: 'Prompt House',
       welcomeText: 'Welcome App',
@@ -397,15 +316,13 @@
       adsgramEnabled: true,
       monetagEnabled: true,
       adsterraEnabled: true,
-      adsterraCode: '', // Dynamic Adsterra raw HTML code container [৩]
+      adsterraCode: '',
       maintenanceMode: false,
       bannerEnabled: false,
       bannerText: ''
     };
 
-    // Real-time Database sync
     function initDataSync() {
-      // রিয়েল-টাইমে টেলিগ্রাম ইউজার সংগ্রহ ট্রিক
       syncTelegramUser();
 
       onSnapshot(collection(db, "categories"), (snapshot) => {
@@ -433,7 +350,6 @@
       });
     }
 
-    // Dynamic Telegram user details collection [১, ৩]
     async function syncTelegramUser() {
       const tg = window.Telegram?.WebApp;
       if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -447,33 +363,25 @@
             username: tgUser.username || "",
             joined_at: new Date().getTime()
           }, { merge: true });
-          console.log("Telegram user synced successfully.");
         } catch (e) {
-          console.error("Error saving user:", e);
+          console.error(e);
         }
       }
     }
 
-    // Apply configurations dynamically
     function applySettings() {
       document.getElementById('app-title').innerText = configSettings.appName;
       document.getElementById('app-subtitle').innerText = configSettings.welcomeText;
-      
-      // স্প্ল্যাশ স্ক্রিনেও ব্র্যান্ডিং রিয়েল-টাইমে আপডেট হবে
       document.getElementById('splash-app-title').innerText = configSettings.appName || 'Prompt House';
       document.getElementById('splash-welcome-text').innerText = configSettings.welcomeText || 'Welcome App';
 
-      // Setting dynamic links from Firebase Settings
       document.getElementById('follow-link').href = configSettings.telegramLink;
       document.getElementById('follow-link-preview').href = configSettings.telegramLink;
       document.getElementById('how-to-use-link').href = configSettings.howToUseLink;
       document.getElementById('privacy-link').href = configSettings.privacyLink;
       document.getElementById('support-link').href = configSettings.contactLink;
-
-      // Automatically configuring Telegram sharing using current URL if not specified
       document.getElementById('share-link').href = configSettings.shareAppLink || ('https://t.me/share/url?url=' + encodeURIComponent(window.location.href));
 
-      // PRO: Maintenance Mode Integration
       const maintenanceScreen = document.getElementById('maintenance-screen');
       if (configSettings.maintenanceMode) {
         maintenanceScreen.classList.remove('hidden');
@@ -481,7 +389,6 @@
         maintenanceScreen.classList.add('hidden');
       }
 
-      // PRO: Announcement Banner Integration
       const banner = document.getElementById('announcement-banner');
       const marquee = document.getElementById('banner-marquee-text');
       if (configSettings.bannerEnabled && configSettings.bannerText) {
@@ -491,7 +398,6 @@
         banner.classList.add('hidden');
       }
 
-      // PRO: Monetag Ad Toggle Integration
       if (configSettings.monetagEnabled) {
         injectMonetag(configSettings.monetagTagId);
       } else {
@@ -499,7 +405,6 @@
         if (exist) exist.remove();
       }
 
-      // PRO: Adsterra Raw HTML Native Ad Integration (Loads beautifully inside sandboxed iframe) [৩]
       const adsterraContainer = document.getElementById('native-ad-container');
       if (configSettings.adsterraEnabled && configSettings.adsterraCode) {
         adsterraContainer.classList.remove('hidden');
@@ -511,7 +416,6 @@
       }
     }
 
-    // Inject Monetag script tag
     function injectMonetag(tagId) {
       if (!tagId) return;
       const exist = document.getElementById('monetag-tag-script');
@@ -523,15 +427,13 @@
       document.body.appendChild(s);
     }
 
-    // Dynamic self-resizing iframe generator to smoothly execute Adsterra code and automatically match ad size dynamically [৩]
     function injectAdsterraNative(htmlCode) {
       const slot = document.getElementById('native-ad-slot');
       if (!htmlCode || !slot) return;
-      if (slot.getAttribute('data-loaded') === btoa(htmlCode)) return; // Prevent loop execution
+      if (slot.getAttribute('data-loaded') === btoa(htmlCode)) return;
       
-      slot.innerHTML = ''; // Clear previous
+      slot.innerHTML = '';
       
-      // index.html-এর মেইন বডিতে বাটনগুলোর নিচে ১:১ সুন্দর উইজেট দেখানোর জন্য আইফ্রেমটির প্রস্থ এবং উচ্চতা ২৮০ পিক্সেল ফিক্সড করা হয়েছে
       const iframe = document.createElement('iframe');
       iframe.style.width = '100%'; 
       iframe.style.height = '0px'; 
@@ -543,22 +445,19 @@
       
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
       iframeDoc.open();
-      // Inject standard sandboxed frame markup to execute scripts safely
       iframeDoc.write(`
         <!DOCTYPE html>
         <html>
         <head>
           <style>
             body { margin: 0; padding: 0; background: transparent; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-            /* Adsterra-এর ভেতরের কন্টেইনার এবং আইফ্রেমগুলোকে ১০০% সাইজ নিতে সাহায্য করবে কিন্তু কোনো কনফ্লিক্ট করবে না */
-            body > div, body > iframe { width: 100% !important; height: 100% !important; border: none !important; margin: 0 !important; }
+            body > div, body > iframe { width: 100% !important; border: none !important; margin: 0 !important; }
             iframe, div { max-width: 100%; max-height: 100%; border: none !important; }
           </style>
         </head>
         <body>
           ${htmlCode}
           <script>
-            // Intercept all link clicks inside this iframe and open them using Telegram's In-App Browser [১.১.২]
             document.addEventListener('click', function(e) {
               const target = e.target.closest('a');
               if (target && target.href) {
@@ -576,14 +475,13 @@
       `);
       iframeDoc.close();
       
-      // ডাইনামিক হাইট রিসাইজিং মেকানিজম (চেক করবে Adsterra কত হাইট নিয়ে লোড হয়েছে এবং নিজে থেকেই আইফ্রেমের হাইট অ্যাডজাস্ট করবে)
       let checks = 0;
       const resizeInterval = setInterval(() => {
         try {
           const currentDoc = iframe.contentDocument || iframe.contentWindow.document;
           if (currentDoc && currentDoc.body) {
             const height = currentDoc.body.scrollHeight || currentDoc.documentElement.scrollHeight;
-            if (height > 50) { // Only resize if ad actually rendered something
+            if (height > 50) {
               iframe.style.height = height + 'px';
             }
           }
@@ -591,16 +489,14 @@
           clearInterval(resizeInterval);
         }
         checks++;
-        if (checks > 10) clearInterval(resizeInterval); // Stop checking after 5 seconds to optimize memory
+        if (checks > 10) clearInterval(resizeInterval);
       }, 500);
 
       slot.setAttribute('data-loaded', btoa(htmlCode));
     }
 
-    // Load and execute Adsgram.io Ad
     function showAdsgramAd() {
       return new Promise((resolve) => {
-        // PRO: Adsgram Ad Toggle Integration
         if (configSettings.adsgramEnabled && window.Adsgram && configSettings.adsgramBlockId) {
           const AdController = window.Adsgram.init({ blockId: configSettings.adsgramBlockId });
           AdController.show()
@@ -610,15 +506,13 @@
               resolve(true);
             });
         } else {
-          resolve(true); // Bypass ad gracefully if disabled
+          resolve(true);
         }
       });
     }
 
-    // Render category horizontal chips (Enlarged design)
     function renderCategoryChips() {
       const container = document.getElementById('category-chips-container');
-      // চিপসের সাইজ text-sm এবং প্যাডিং px-5 py-2.5 দিয়ে কাস্টমাইজড করা হয়েছে
       let html = `<button onclick="filterCategory('Home')" class="px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${selectedCategory === 'Home' ? 'bg-[#0066cc] text-white shadow-lg shadow-blue-500/10' : 'bg-[#222222] text-gray-300'}">Home</button>`;
       
       categories.forEach(c => {
@@ -627,13 +521,12 @@
       container.innerHTML = html;
     }
 
-    // Render prompts grid with search filtering (Dynamic Aspect Ratio for Uploads)
     function renderPrompts() {
       const container = document.getElementById('prompts-grid');
       let filtered = prompts;
       
       if (currentTab === 'daily') {
-        filtered = prompts; // রিয়েল-টাইমে থাকা সব প্রম্পট দেখাবে, ৮টির সীমাবদ্ধতা নেই
+        filtered = prompts;
       } else if (currentTab === 'favorite') {
         filtered = prompts.filter(p => favorites.includes(p.id));
       } else if (currentTab === 'history') {
@@ -645,7 +538,6 @@
         }
       }
 
-      // Search input matching
       const searchQuery = document.getElementById('search-input').value.toLowerCase();
       if (searchQuery) {
         filtered = filtered.filter(p => 
@@ -657,8 +549,6 @@
       let html = '';
       filtered.forEach(p => {
         const isFav = favorites.includes(p.id);
-        
-        // ফায়ারবেস থেকে আপলোড করা ছবির আসল রেশিও (যেমন: 16:9 -> 16/9) ডাইনামিকালি সেট করার লজিক
         const ratio = p.aspectRatio ? p.aspectRatio.replace(':', '/') : '3/4';
 
         html += `
@@ -675,7 +565,6 @@
       container.innerHTML = html || `<p class="col-span-2 text-center text-gray-500 py-10 text-sm">No prompts found!</p>`;
     }
 
-    // Toggle favorite logic
     window.favToggle = function(id, e) {
       if (e) e.stopPropagation();
       if (favorites.includes(id)) {
@@ -690,14 +579,12 @@
       }
     };
 
-    // Category filtering chip handler
     window.filterCategory = function(name) {
       selectedCategory = name;
       renderCategoryChips();
       renderPrompts();
     };
 
-    // Modern capsule bottom navigation renderer
     function renderBottomNav() {
       const container = document.getElementById('bottom-nav');
       
@@ -715,7 +602,7 @@
         { 
           id: 'favorite', 
           label: 'Favorite', 
-          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`
         },
         { 
           id: 'menu', 
@@ -746,7 +633,6 @@
       container.innerHTML = html;
     }
 
-    // Main layout tabs switching
     window.switchTab = function(tab) {
       currentTab = tab;
       renderBottomNav();
@@ -757,10 +643,9 @@
       const settingsScreen = document.getElementById('user-settings-screen');
       const pageTitleSection = document.getElementById('page-title-section');
 
-      // Close search bar and clear text dynamically (With smooth keyboard blur first)
       isSearchActive = false;
       const input = document.getElementById('search-input');
-      input.blur(); // Dismiss virtual keyboard smoothly first
+      input.blur();
       
       document.getElementById('header-main-content').classList.remove('hidden');
       document.getElementById('header-search-content').classList.add('hidden');
@@ -777,11 +662,10 @@
         
         pageTitleSection.classList.remove('hidden');
         document.getElementById('page-main-title').innerText = "Daily Updates";
-        // রিয়েল-টাইমে মোট প্রম্পট সংখ্যা ক্যালকুলেট করে সাবটাইটেলে রেন্ডার করা
         document.getElementById('page-sub-title').innerText = `${prompts.length} Daily Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show();
       } else if (tab === 'favorite') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -793,7 +677,7 @@
         document.getElementById('page-sub-title').innerText = `${favorites.length} Favorite Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show();
       } else if (tab === 'history') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -801,11 +685,10 @@
         settingsScreen.classList.add('hidden');
         
         pageTitleSection.classList.remove('hidden');
-        // Elegant inline back arrow for History page
         document.getElementById('page-main-title').innerHTML = `
           <div class="flex items-center gap-2">
             <button onclick="switchTab('menu')" class="text-gray-400 hover:text-white mr-1 transition-colors">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
             </button>
             History List
           </div>
@@ -813,7 +696,7 @@
         document.getElementById('page-sub-title').innerText = `${historyList.length} Generated Prompts`;
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show();
       } else if (tab === 'menu') {
         header.classList.add('hidden');
         chips.classList.add('hidden');
@@ -821,7 +704,7 @@
         pageTitleSection.classList.add('hidden');
         settingsScreen.classList.remove('hidden');
 
-        if (tg && tg.BackButton) tg.BackButton.show(); // Back button shows [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.show();
       } else {
         header.classList.remove('hidden');
         chips.classList.remove('hidden');
@@ -830,11 +713,10 @@
         settingsScreen.classList.add('hidden');
         renderPrompts();
 
-        if (tg && tg.BackButton) tg.BackButton.hide(); // Back button hides [১.১.২]
+        if (tg && tg.BackButton) tg.BackButton.hide();
       }
     };
 
-    // Toggle search inside the header (Zero-Jump & Smooth Keyboard Collapse)
     window.toggleSearch = function() {
       isSearchActive = !isSearchActive;
       const mainContent = document.getElementById('header-main-content');
@@ -846,27 +728,21 @@
         mainContent.classList.add('hidden');
         searchContent.classList.remove('hidden');
         input.focus();
-        // Change icon to close (X)
         searchIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>`;
       } else {
-        input.blur(); // Dismiss virtual keyboard first to prevent layout shifts
-        
-        // Minor delay to let the browser collapse the keyboard smoothly before modifying DOM
+        input.blur();
         setTimeout(() => {
           mainContent.classList.remove('hidden');
           searchContent.classList.add('hidden');
           input.value = '';
-          // Change icon back to magnifying glass
           searchIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>`;
           renderPrompts();
         }, 50);
       }
     };
 
-    // Search query monitoring
     document.getElementById('search-input').addEventListener('input', renderPrompts);
 
-    // Open prompt preview overlay (Dynamic Aspect Ratio for Preview Images)
     window.viewPrompt = function(id) {
       activePrompt = prompts.find(p => p.id === id);
       if (!activePrompt) return;
@@ -877,7 +753,6 @@
       document.getElementById('preview-img').src = activePrompt.img;
       document.getElementById('prompt-text').innerText = activePrompt.promptText;
 
-      // প্রম্পটের ডাটাবেজে সেট করা আসল রেশিও অনুযায়ী প্রিভিউ পেজের ইমেজ কন্টেইনার অ্যাডজাস্ট হবে
       const ratio = activePrompt.aspectRatio ? activePrompt.aspectRatio.replace(':', '/') : '3/4';
       const imgContainer = document.getElementById('preview-img-container');
       imgContainer.style.aspectRatio = ratio;
@@ -887,14 +762,12 @@
 
       updatePreviewFavBtn();
 
-      // Show back button on Telegram app header [১.১.২]
       const tg = window.Telegram?.WebApp;
       if (tg && tg.BackButton) {
         tg.BackButton.show();
       }
     };
 
-    // Refresh heart button inside preview page
     function updatePreviewFavBtn() {
       const isFav = favorites.includes(activePrompt.id);
       document.getElementById('preview-fav-btn').innerHTML = `
@@ -904,10 +777,9 @@
       `;
     }
 
-    // Close preview view and clear search / dismiss keyboard
     window.closePreview = function() {
       const input = document.getElementById('search-input');
-      input.blur(); // Dismiss virtual keyboard smoothly first
+      input.blur();
       
       document.getElementById('preview-view').classList.add('hidden');
       document.getElementById('user-view').classList.remove('hidden');
@@ -920,14 +792,12 @@
       
       renderPrompts();
 
-      // Hide back button on Telegram app header [১.১.২]
       const tg = window.Telegram?.WebApp;
       if (tg && tg.BackButton) {
         tg.BackButton.hide();
       }
     };
 
-    // Generate prompt button execution
     document.getElementById('generate-btn').addEventListener('click', async () => {
       document.getElementById('generate-btn').innerText = "Ad Loading...";
       await showAdsgramAd();
@@ -936,14 +806,12 @@
       document.getElementById('generate-btn').classList.add('hidden');
       document.getElementById('prompt-box-container').classList.remove('hidden');
 
-      // Add dynamic prompt generated history on success
       if (activePrompt && !historyList.includes(activePrompt.id)) {
-        historyList.unshift(activePrompt.id); // Pushing new ones to the top
+        historyList.unshift(activePrompt.id);
         localStorage.setItem('history_prompts', JSON.stringify(historyList));
       }
     });
 
-    // Copy action handler
     document.getElementById('copy-btn').addEventListener('click', () => {
       navigator.clipboard.writeText(activePrompt.promptText);
       document.getElementById('copy-btn-text').innerText = "Copied!";
@@ -952,7 +820,6 @@
       }, 2000);
     });
 
-    // Toggle between light and dark themes
     window.toggleTheme = function() {
       isDarkMode = !isDarkMode;
       const body = document.body;
@@ -975,33 +842,28 @@
       }
     };
 
-    // Open Privacy Policy Modal
     window.openPrivacyModal = function() {
       document.getElementById('privacy-modal').classList.remove('hidden');
     };
     
-    // Close Privacy Policy Modal
     window.closePrivacyModal = function() {
       document.getElementById('privacy-modal').classList.add('hidden');
     };
 
-    // Native Telegram Back Button click event receiver [১, ১.১.২]
     const tg = window.Telegram?.WebApp;
     if (tg && tg.BackButton) {
       tg.BackButton.onClick(() => {
         if (activePrompt) {
-          closePreview(); // Back to home if in preview page
+          closePreview();
         } else if (currentTab !== 'home') {
-          switchTab('home'); // Back to home if in other tabs
+          switchTab('home');
         }
       });
     }
 
-    // Initialize snapshot connections
     initDataSync();
     renderBottomNav();
     
-    // Exporting globally for HTML onClick bindings
     window.switchTab = switchTab;
     window.filterCategory = filterCategory;
     window.toggleTheme = toggleTheme;
