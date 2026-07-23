@@ -14,7 +14,7 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-    body, * {
+    body {
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
@@ -122,7 +122,8 @@
         <p id="page-sub-title" class="text-xs text-gray-400">8 Daily Prompts</p>
       </div>
 
-      <div id="prompts-grid" class="grid grid-cols-2 gap-3"></div>
+      <!-- ম্যাসনরি লেআউট columns-2 দিয়ে ডিজাইন ভাঙার চিরতরে সমাধান করা হয়েছে -->
+      <div id="prompts-grid" class="columns-2 gap-3 space-y-3 w-full"></div>
 
       <div id="user-settings-screen" class="hidden flex flex-col w-full px-4">
         <div class="flex flex-col items-center py-6">
@@ -157,7 +158,7 @@
           <a id="how-to-use-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-teal-500/10 text-teal-500">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
               </span>
               <span class="text-sm font-semibold">How to use?</span>
             </div>
@@ -190,7 +191,7 @@
           <a id="privacy-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-500">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
               </span>
               <span class="text-sm font-semibold">Privacy Policy</span>
             </div>
@@ -245,10 +246,9 @@
       </div>
     </div>
 
-    <!-- Dynamic Adsterra HTML Native Ad Container (Aspect Ratio 1:1) -->
     <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
       <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
-      <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[260px]"></div>
+      <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden"></div>
     </div>
 
     <div class="bg-[#1c1c1e] bg-menu-box rounded-[24px] overflow-hidden border border-gray-800/40">
@@ -404,7 +404,6 @@
       document.getElementById('how-to-use-link').href = configSettings.howToUseLink;
       document.getElementById('privacy-link').href = configSettings.privacyLink;
       document.getElementById('support-link').href = configSettings.contactLink;
-
       document.getElementById('share-link').href = configSettings.shareAppLink || ('https://t.me/share/url?url=' + encodeURIComponent(window.location.href));
 
       const maintenanceScreen = document.getElementById('maintenance-screen');
@@ -800,7 +799,7 @@
       const isFav = favorites.includes(activePrompt.id);
       document.getElementById('preview-fav-btn').innerHTML = `
         <svg onclick="favToggle('${activePrompt.id}', event)" class="w-6 h-6 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-white'}" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2a5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
         </svg>
       `;
     }
