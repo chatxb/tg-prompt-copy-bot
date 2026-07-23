@@ -190,7 +190,7 @@
           <a id="privacy-link" href="#" target="_blank" class="flex items-center justify-between p-4 border-b border-gray-800/50 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-500">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
               </span>
               <span class="text-sm font-semibold">Privacy Policy</span>
             </div>
@@ -199,7 +199,7 @@
           <a id="support-link" href="#" target="_blank" class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5">
             <div class="flex items-center gap-3">
               <span class="p-2.5 rounded-xl bg-red-500/10 text-red-500">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
               </span>
               <span class="text-sm font-semibold">Contact Us</span>
             </div>
@@ -214,9 +214,6 @@
     </div>
   </div>
 
-  <!-- ==================================================== -->
-  <!-- 2. Preview Prompt Screen -->
-  <!-- ==================================================== -->
   <div id="preview-view" class="hidden w-full sm:max-w-md sm:rounded-[36px] sm:border sm:border-gray-800/80 overflow-hidden flex flex-col p-4 bg-[#121212] min-h-screen sm:min-h-[85vh] transition-all duration-300">
     <header class="flex justify-between items-center py-3 mb-4">
       <button onclick="closePreview()" class="p-1 text-gray-400 hover:text-white">
@@ -230,7 +227,6 @@
       <img id="preview-img" src="" alt="" class="h-full w-auto object-cover">
     </div>
 
-    <!-- Action Area -->
     <div class="mb-6 animate-fadeIn">
       <button id="generate-btn" class="w-full py-4 bg-[#0066cc] text-white font-semibold rounded-2xl hover:bg-[#0052a3] transition-all">
         Generate Prompt
@@ -245,10 +241,9 @@
       </div>
     </div>
 
-    <!-- Dynamic Adsterra HTML Native Ad Container -->
     <div id="native-ad-container" class="hidden my-4 bg-[#1c1c1e] bg-menu-box rounded-[24px] border border-gray-800/40 p-3 text-center app-card">
       <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Sponsored</p>
-      <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden"></div>
+      <div id="native-ad-slot" class="w-full flex justify-center items-center overflow-hidden min-h-[260px]"></div>
     </div>
 
     <div class="bg-[#1c1c1e] bg-menu-box rounded-[24px] overflow-hidden border border-gray-800/40">
@@ -279,18 +274,6 @@
     </div>
   </div>
 
-  <!-- Dynamic Maintenance Mode Overlay -->
-  <div id="maintenance-screen" class="hidden fixed inset-0 bg-[#121212] z-[100] flex flex-col items-center justify-center p-6 text-center">
-    <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-3xl mb-6 shadow-lg shadow-red-500/5 animate-pulse">
-      <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-    </div>
-    <h2 class="text-2xl font-bold mb-2">Under Maintenance</h2>
-    <p class="text-sm text-gray-400 max-w-xs leading-relaxed">We are currently updating our database. Prompt House will be back online shortly. Thank you for your patience!</p>
-  </div>
-
-  <!-- ==================================================== -->
-  <!-- ৫. ফায়ারবেস স্ক্রিপ্ট এবং মেইন লজিক (Firebase Script) -->
-  <!-- ==================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -644,7 +627,7 @@
         { 
           id: 'menu', 
           label: 'Menu', 
-          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>`
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" h="20" y1="18" y2="18"></line></svg>`
         }
       ];
 
@@ -879,14 +862,6 @@
       }
     };
 
-    window.openPrivacyModal = function() {
-      document.getElementById('privacy-modal').classList.remove('hidden');
-    };
-    
-    window.closePrivacyModal = function() {
-      document.getElementById('privacy-modal').classList.add('hidden');
-    };
-
     const tg = window.Telegram?.WebApp;
     if (tg && tg.BackButton) {
       tg.BackButton.onClick(() => {
@@ -904,12 +879,9 @@
     window.switchTab = switchTab;
     window.filterCategory = filterCategory;
     window.toggleTheme = toggleTheme;
-    window.openPrivacyModal = openPrivacyModal;
-    window.closePrivacyModal = closePrivacyModal;
     window.toggleSearch = toggleSearch;
 
   </script>
-  <!-- ব্রাউজারের CORS পলিসি বাইপাস করার জন্য সাধারণ ক্যাচ-অল স্ক্রিপ্ট (ফাইল প্রোটোকলে আটকে থাকবে না) -->
   <script>
     setTimeout(function() {
       const splash = document.getElementById('splash-screen');
@@ -918,7 +890,6 @@
         setTimeout(function() {
           splash.classList.add('hidden');
         }, 500);
-        console.warn("Splash screen dismissed by non-module fallback script.");
       }
     }, 2500);
   </script>
